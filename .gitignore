@@ -1,0 +1,7 @@
+.svn/entries
+.svn/format
+*.svn-base
+*.tmp
+.svn/wc.db
+*.class
+src/org/assistments/direct/assistments-classroom-bb2d6fac7a97.p12

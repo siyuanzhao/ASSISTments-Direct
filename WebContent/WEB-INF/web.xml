@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
+  <display-name>ASSISTments Direct</display-name>
+  <welcome-file-list>
+    <welcome-file>teacher</welcome-file>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.htm</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>default.html</welcome-file>
+    <welcome-file>default.htm</welcome-file>
+    <welcome-file>default.jsp</welcome-file>
+  </welcome-file-list>
+  <context-param>
+    <param-name>path</param-name>
+    <param-value>/direct/</param-value>
+  </context-param>
+  <context-param>
+    <param-name>image_prefix</param-name>
+    <param-value>https://test1.assistments.org</param-value>
+  </context-param>
+  <servlet>
+    <servlet-name>assignment</servlet-name>
+    <servlet-class>org.assistments.direct.student.Assignment</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>assignment</servlet-name>
+    <url-pattern>/assignment/*</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>direct</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>direct</servlet-name>
+    <url-pattern>/google_classroom/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>direct</servlet-name>
+    <url-pattern>/s/*</url-pattern>
+  </servlet-mapping>
+  <error-page>
+    <error-code>404</error-code>
+    <location>/404.jsp</location>
+  </error-page>
+  <error-page>
+    <error-code>500</error-code>
+    <location>/500.jsp</location>
+  </error-page>
+  <error-page>
+    <exception-type>java.lang.Exception</exception-type>
+    <location>/applicationExceptionHandler</location>
+  </error-page>
+</web-app>

@@ -1,0 +1,100 @@
+@CHARSET "ISO-8859-1";
+html {
+	height: 100%;
+}
+body {
+	background: #b4d8e7 !important;
+	text-align: center;
+	height:100%;
+ }
+ 
+ .spinner {
+  display: inline-block;
+  opacity: 0;
+  width: 0;
+
+  -webkit-transition: opacity 0.25s, width 0.25s;
+  -moz-transition: opacity 0.25s, width 0.25s;
+  -o-transition: opacity 0.25s, width 0.25s;
+  transition: opacity 0.25s, width 0.25s;
+}
+
+.has-spinner.active {
+  cursor:progress;
+}
+
+.has-spinner.active .spinner {
+  opacity: 1;
+  width: auto; /* This doesn't work, just fix for unkown width elements */
+}
+
+.has-spinner.btn-mini.active .spinner {
+    width: 10px;
+}
+
+.has-spinner.btn-small.active .spinner {
+    width: 13px;
+}
+
+.has-spinner.btn.active .spinner {
+    width: 16px;
+}
+
+.has-spinner.btn-large.active .spinner {
+    width: 19px;
+}
+
+ .banner {
+    background-color: #005192;
+   	-webkit-box-shadow: inset 0 -2px 5px rgba(0,0,0,.1);
+    box-shadow: inset 0 -2px 5px rgba(0,0,0,.1);
+    height: 66px;
+}
+
+#page-wrap {
+  width: 80%;
+  min-width: 400px;
+  margin: 0 auto;
+  min-height:100%;
+  height: auto !important;
+  background-color: white;
+  position: relative;
+  top:0;
+  bottom: 2px;
+}
+
+.content {
+	width: 60%; 
+	margin: 0 auto; 
+	text-align: left; 
+	min-width: 450px;
+}
+
+.header, .footer {
+	background-position: center top;
+	background-color: #E1E6E6;
+	background-image: url("../images/direct_logo.png");
+	background-size: 90% 80%;
+	height:180px;
+	background-repeat: no-repeat;
+}
+
+.footer {
+	position: relative;
+	width:800px;
+	left: 10%;
+	height: 200px;
+	background-position: center bottom;
+}
+
+.datagrid table { border-collapse: collapse; text-align: left; width: 100%; } 
+.datagrid {font: normal 12px/150% Arial, Helvetica, sans-serif; background: #fff; overflow: hidden; 
+border: 3px solid #006699; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; }
+.datagrid table td, .datagrid table th { padding: 18px 12px; }
+.datagrid table thead th {
+background-color:#C1DAD7; color:#006699; font-size: 16px; font-weight: bold; border-left: 3px solid #0070A8; } 
+.datagrid table thead th:first-child { border: none; }
+.datagrid table tbody td { color: #00557F; border-left: 3px solid ;font-size: 14px;border-bottom: 3px solid ;font-weight: normal; }
+.datagrid table tbody .alt td { background: #E1EEf4; color: #00557F; }
+.datagrid table tbody td:first-child { border-left: none; }
+.datagrid table tbody tr:last-child td { border-bottom: none; }

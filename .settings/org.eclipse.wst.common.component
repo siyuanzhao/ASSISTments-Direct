@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="direct">
+        <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/test"/>
+        <dependent-module archiveName="ConnectorAPI.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/ConnectorAPI/ConnectorAPI">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="domain.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/domain/domain">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="service.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/service/service">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="shared.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/shared/shared">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="util.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/util/util">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <property name="context-root" value="direct"/>
+        <property name="java-output-path" value="/direct/bin"/>
+    </wb-module>
+</project-modules>
