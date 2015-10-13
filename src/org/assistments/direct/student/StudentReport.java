@@ -80,6 +80,7 @@ public class StudentReport extends HttpServlet {
 			}
 		} else {
 			session.setAttribute("notice_to_students", "");
+			studentReportURL = context.getAttribute(studentReportId).toString();
 		}
 		session.setAttribute("student_report", studentReportURL);
 //		resp.sendRedirect(studentReportURL);

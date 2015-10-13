@@ -40,6 +40,7 @@
 			      parent.postMessage("Assginment Done", "*");
 			      parent.parent.postMessage("Assginment Done", "*");
 			      parent.parent.parent.postMessage("Assginment Done", "*");
+			      parent.parent.parent.postMessage("Assginment Done", "*");
 			}  else {
 			      localStorage.removeItem( 'firstLoad' );
 			}

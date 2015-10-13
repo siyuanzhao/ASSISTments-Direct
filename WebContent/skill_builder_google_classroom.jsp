@@ -161,7 +161,7 @@ var tour;
 				window.location.assign("/direct/GoogleAppsLandingPage");
 			}else if(id == "skill_builder_page"){
 				toolSelected = "skill_builder_link";
-				window.location.assign("/direct/SkillBuilderGoogleClassroom?folder_id=177540&tool_type=skill_builder");
+				window.location.assign("/direct/SkillBuilderGoogleClassroom?folder_id=22&tool_type=skill_builder");
 			}else if (id == "ap_page"){
 				toolSelected = "ap_statistics_link";
 				window.location.assign("/direct/SkillBuilderGoogleClassroom?folder_id=210644&tool_type=ap_statistics");

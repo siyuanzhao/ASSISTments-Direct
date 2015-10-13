@@ -109,6 +109,7 @@ public class BeginAssignment extends HttpServlet {
 //		String whiteLabeled = "true";
 //		String accountName = student.getDisplayName();
 		String tutorURL = assignmentServ.getAssignment(assignmentRef, onExit);
+		tutorURL = URLEncoder.encode(Constants.ASSISSTments_URL, "UTF-8") + tutorURL;
 		String loginURL = Constants.LOGIN_URL;
 		String addressToGo = String.format("%1$s?partner=%2$s&access=%3$s&on_success=%4$s&on_failure=%5$s", 
 				loginURL, LiteUtility.PARTNER_REF, stuBehalf, tutorURL, LiteUtility.LOGIN_FAILURE);

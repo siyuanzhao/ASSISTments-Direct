@@ -201,12 +201,9 @@ public class GoogleClassroom {
 			onExit = URLEncoder.encode(onExit, "UTF-8");
 			onExit = URLEncoder.encode(onExit, "UTF-8");
 			AssignmentService as = new AssignmentServiceImpl(LiteUtility.PARTNER_REF, studentToken);
-			String logoUrl = LiteUtility.DIRECT_URL + "/images/direct_logo.gif";
-			logoUrl = URLEncoder.encode(logoUrl, "UTF-8");
-			String whiteLabeled = "true";
-			String accountName = student.getDisplayName();
-			String tutorURL = as.getAssignment(assignmentRef, onExit, logoUrl, whiteLabeled, accountName);
-//			String tutorURL = "";
+
+			String tutorURL = as.getAssignment(assignmentRef, onExit);
+			tutorURL = URLEncoder.encode(Constants.ASSISSTments_URL, "UTF-8") + tutorURL;
 			String loginURL = Constants.LOGIN_URL;
 			String tutorLink = String.format("%1$s?partner=%2$s&access=%3$s&on_success=%4$s&on_failure=%5$s", 
 					loginURL, LiteUtility.PARTNER_REF, studentToken, tutorURL, LiteUtility.LOGIN_FAILURE);
