@@ -42,9 +42,15 @@
 			color: white;
 		}
 		.banner {
-    		background-color: #005192;
-   		 	-webkit-box-shadow: inset 0 -2px 5px rgba(0,0,0,.1);
-    		box-shadow: inset 0 -2px 5px rgba(0,0,0,.1);
+			/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#4f85bb+0,4f85bb+100;Blue+3D+%239 */
+			background: #4f85bb; /* Old browsers */
+			background: -moz-linear-gradient(top,  #4f85bb 0%, #4f85bb 100%); /* FF3.6+ */
+			background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#4f85bb), color-stop(100%,#4f85bb)); /* Chrome,Safari4+ */
+			background: -webkit-linear-gradient(top,  #4f85bb 0%,#4f85bb 100%); /* Chrome10+,Safari5.1+ */
+			background: -o-linear-gradient(top,  #4f85bb 0%,#4f85bb 100%); /* Opera 11.10+ */
+			background: -ms-linear-gradient(top,  #4f85bb 0%,#4f85bb 100%); /* IE10+ */
+			background: linear-gradient(to bottom,  #4f85bb 0%,#4f85bb 100%); /* W3C */
+			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4f85bb', endColorstr='#4f85bb',GradientType=0 ); /* IE6-9 */
     		height: 68px;
 		}
 </style>

@@ -1,4 +1,4 @@
-package org.assistments.direct;
+package org.assistments.direct.google;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,6 +33,7 @@ public class SkillBuilderGoogleClassroom extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doPost(request, response);
 	}
@@ -40,13 +41,14 @@ public class SkillBuilderGoogleClassroom extends HttpServlet {
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
-		String externalRef = (String)session.getAttribute("external_ref");
-		if(externalRef == null){
-			request.getRequestDispatcher("google_apps_landing_page.jsp").forward(request, response);
-			return;
-		}
+//		String externalRef = (String)session.getAttribute("external_ref");
+//		if(externalRef == null){
+//			request.getRequestDispatcher("google_apps_landing_page.jsp").forward(request, response);
+//			return;
+//		}
 		String toolType = request.getParameter("tool_type");
 		session.setAttribute("tool_type", toolType);
 		String folderId = request.getParameter("folder_id");

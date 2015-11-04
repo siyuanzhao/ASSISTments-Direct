@@ -34,6 +34,7 @@ public class DeleteStudent extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doPost(request, response);
 	}
@@ -41,6 +42,7 @@ public class DeleteStudent extends HttpServlet {
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int studentId = Integer.parseInt(request.getParameter("studentId"));
 		int sectionId = Integer.parseInt(request.getParameter("sectionId"));

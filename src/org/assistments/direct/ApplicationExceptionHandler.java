@@ -49,7 +49,7 @@ public class ApplicationExceptionHandler extends HttpServlet {
 		Timestamp now = new Timestamp(c.getTimeInMillis());
 		String sourceType = "Direct";
 		ErrorLogController.addNewError(servletName, sourceType, 
-				errorType, sw.getBuffer().toString(), lineNum, 1, e.getMessage(), now);
+				errorType, sw.getBuffer().toString(), lineNum, e.getMessage(), now);
 //		System.out.println(sw.getBuffer().toString());
 		String errorMsg = "Sorry... We encountered an error!";
 		String instruction = "The server seems to be unstable at this moment. Please take a break and try it again later.";

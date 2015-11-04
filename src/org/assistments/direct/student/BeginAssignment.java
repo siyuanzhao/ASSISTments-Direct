@@ -21,6 +21,7 @@ import org.assistments.connector.service.impl.AccountServiceImpl;
 import org.assistments.connector.service.impl.AssignmentServiceImpl;
 import org.assistments.connector.service.impl.StudentClassServiceImpl;
 import org.assistments.connector.utility.Constants;
+import org.assistments.connector.utility.LocalhostSettings;
 import org.assistments.direct.LiteUtility;
 import org.assistments.service.domain.ReferenceTokenPair;
 import org.assistments.service.domain.User;

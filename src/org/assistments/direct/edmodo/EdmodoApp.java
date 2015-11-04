@@ -260,7 +260,7 @@ public class EdmodoApp {
 		String courseId = (String)req.get("course_id");
 		String courseName = (String)req.get("course_name");
 		String problemSetId = (String)req.get("problem_set_id");
-		
+		String due_date = (String)req.get("due_date");
 		StudentClassService scs = new StudentClassServiceImpl(ApplicationSettings.partner_reference, assistmentsAccessToken);
 		String stuClassRef = scs.transferStudentClass(courseName, courseId, "", userRef);
 		
@@ -272,7 +272,14 @@ public class EdmodoApp {
 		ProblemSetService pss = new ProblemSetServiceImpl();
 		ProblemSet ps = pss.find(Long.valueOf(problemSetId));
 		String title = ps.getName();
-		eac.createGroupAssignment(Long.valueOf(courseId), title, assignmentRef, "2015-10-16");
+		String edmodoAssignmentId = eac.createGroupAssignment(Long.valueOf(courseId), title, assignmentRef, due_date);
+		try {
+			PartnerToAssistments pta = as.find(ColumnNames.ASSISTMENTS_EXTERNAL_REFERENCE, assignmentRef).get(0);
+			pta.setPartnerExternalReference(edmodoAssignmentId);
+			as.updateExternalAssignment(pta);
+		} catch (ReferenceNotFoundException e) {
+			// this should not ever happen, because I just creted this assignment
+		}
 		
 		map.put("edmodo_link", edmodoLink);
 		return new ResponseEntity<>(map, HttpStatus.OK);

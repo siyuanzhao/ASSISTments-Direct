@@ -68,38 +68,53 @@ function handleAuthResult(authResult) {
 		firstName = resp.name.givenName;
 		lastName = resp.name.familyName;
 		$("#message").html("Verify you are a student or a teacher...<br>");
-		//console.log(firstName);
-		request = gapi.client.request({
-			root : 'https://classroom.googleapis.com',
-			path : 'v1/courses/'+course_id+"/teachers"
-		});
-		request.execute(function(resp) {
-			role = "student";
-			if(resp.error != null) {
-				if(resp.error.message.indexOf("ClassroomApiDisabled") >= 0) {
-					$("#message").html("Classroom API is not disabled on your account. Please contact your admin.<br>");	
+		if(resp.permissions != null) {
+			//console.log(firstName);
+			request = gapi.client.request({
+				root : 'https://classroom.googleapis.com',
+				path : 'v1/courses/'+course_id+"/teachers"
+			});
+			request.execute(function(resp) {
+				role = "student";
+				if(resp.error != null) {
+					// access to api is denied
+					role = 'student';
 				} else {
-					$("#message").html("Sorry... Google Classroom is not available for your google account at this time.<br>");	
-				}
-				return;
-			}
-			var teachers = resp.teachers;
-			if(teachers.length > 0) {
-				var i = 0;
-				for(i=0; i < teachers.length; i++) {
-					var teacher = teachers[i];
-					if(teacher.userId == id) {
-						role = "teacher";
+					var teachers = resp.teachers;
+					if(teachers.length > 0) {
+						var i = 0;
+						for(i=0; i < teachers.length; i++) {
+							var teacher = teachers[i];
+							if(teacher.userId == id) {
+								role = "teacher";
+							}
+						}
 					}
 				}
-			}
-			//console.log(role);
-			//log in the user to ASSISTments 
-			if(role == "student") {
-				$("#message").html("Load your assignment...<br>");
-			} else {
-				$("#message").html("Build your report...<br>");
-			}
+				//console.log(role);
+				//log in the user to ASSISTments 
+				if(role == "student") {
+					$("#message").html("Load your assignment...<br>");
+				} else {
+					$("#message").html("Build your report...<br>");
+				}
+				$.ajax({
+					url: 'start',
+					type: 'GET',
+					data: {id: id, role: role, firstName: firstName, lastName: lastName},
+					dataType: "json",
+					async: true,
+					success: function(resp) {
+						window.location.replace(resp.location);
+					},
+					error: function(resp) {
+						$("#message").html("There is an error.<br> Error message: " + resp.responseText);
+					}
+				});
+			});
+		} else {
+			role = 'student';
+			$("#message").html("Load your assignment...<br>");
 			$.ajax({
 				url: 'start',
 				type: 'GET',
@@ -113,7 +128,8 @@ function handleAuthResult(authResult) {
 					$("#message").html("There is an error.<br> Error message: " + resp.responseText);
 				}
 			});
-		});
+		}
+		
 	});
 	
   } else {

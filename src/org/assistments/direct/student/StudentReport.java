@@ -1,6 +1,7 @@
 package org.assistments.direct.student;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
@@ -12,14 +13,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.assistments.connector.service.AssignmentService;
-import org.assistments.connector.service.impl.AssignmentServiceImpl;
+import org.assistments.connector.service.ProblemSetService;
+import org.assistments.connector.service.ReportService;
+import org.assistments.connector.service.impl.ProblemSetServiceImpl;
+import org.assistments.connector.service.impl.ReportServiceImpl;
 import org.assistments.connector.utility.Response;
 import org.assistments.direct.LiteUtility;
 import org.assistments.direct.edmodo.EdmodoApp;
 import org.assistments.edmodo.controller.EdmodoAssignmentController;
 import org.assistments.edmodo.utility.ApplicationSettings;
 import org.assistments.service.controller.impl.AssignmentControllerWebImpl;
+import org.assistments.service.domain.ProblemSet;
+import org.assistments.service.domain.StudentReportEntry;
 
 import com.google.gson.Gson;
 
@@ -44,20 +49,18 @@ public class StudentReport extends HttpServlet {
 		ServletContext context = getServletContext();
 		String studentRef = req.getParameter("student_ref");
 		String assignmentRef = req.getParameter("assignment_ref");
-		String studentReportId = LiteUtility.generateStudentReportId(studentRef, assignmentRef);
-		String studentReportURL = "";
-		if(context.getAttribute(studentReportId) == null) {
-			RequestDispatcher dispatcher = req.getRequestDispatcher("/assignment_finished.jsp");
-			dispatcher.forward(req, resp);
-			return;
-		}
-		
+		ProblemSetService pss = new ProblemSetServiceImpl();
+		ProblemSet ps = pss.findByAssignment(assignmentRef);
+		ReportService rs = new ReportServiceImpl();
+		List<StudentReportEntry> entryList = rs.generateStudentReport(studentRef, assignmentRef);
 		HttpSession session = req.getSession();
+		session.setAttribute("report_entries", entryList);
+		session.setAttribute("problem_set_name", ps.getName());
+		
+		String studentReportId = LiteUtility.generateStudentReportId(studentRef, assignmentRef);
 		String from = req.getParameter("from");
 		if(from != null) {
 			if("google_classroom".equals(from)) {
-				studentReportURL = context.getAttribute(studentReportId).toString();
-				context.removeAttribute(studentReportId);
 				String noticeToStudents = "You have completed this problem set. Return to Classroom, open the assignment and mark as done.";
 				session.setAttribute("notice_to_students", noticeToStudents);
 			} else if("edmodo".equalsIgnoreCase(from)) {
@@ -71,7 +74,6 @@ public class StudentReport extends HttpServlet {
 				String total = "100";
 				String userToken = map.get("edmodoUserToken");
 				String accessToken = map.get("edmodoAccessToken");
-				studentReportURL = map.get("reportUrl");
 				String assignmentId = map.get("edmodoAssignmentId");
 				EdmodoAssignmentController eac = new EdmodoAssignmentController(EdmodoApp.API_KEY, 
 						userToken, accessToken);
@@ -80,12 +82,9 @@ public class StudentReport extends HttpServlet {
 			}
 		} else {
 			session.setAttribute("notice_to_students", "");
-			studentReportURL = context.getAttribute(studentReportId).toString();
 		}
-		session.setAttribute("student_report", studentReportURL);
-//		resp.sendRedirect(studentReportURL);
-		String url = LiteUtility.DIRECT_URL + "/tutor";
-		resp.sendRedirect(url);
+		
+		req.getRequestDispatcher("student_report.jsp").forward(req, resp);
 	}
 	
 }

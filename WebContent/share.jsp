@@ -733,6 +733,7 @@ var emailAddr = "";
 				<div id="my-signin2" class="g-signin2" data-onsuccess="onSignIn" data-theme="dark" 
 				data-width="250" data-height="50" data-longtitle="true"></div>
 			</div>
+			<!-- end of sign in with google -->
 			<img style="display: inline-block; position: relative; bottom:10px;"	src="../images/indicator.gif" id="google_login_indicator" height="25" width="25">
 			<div style="margin-top: 10px;"></div>
 			<div id="fb-root"></div>

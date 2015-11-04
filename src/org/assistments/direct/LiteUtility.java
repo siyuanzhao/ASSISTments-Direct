@@ -48,7 +48,7 @@ public class LiteUtility {
 	public static final String TIMEZONE = "GMT-4";
 	public static final String REGISTRATION_CODE = "LAOLI";
 	public static final String STUDENT_REPORT_SUFFIX = "_student_report_url";
-	public static final String DIRECT_URL = "https://test1.assistments.org/direct";
+	public static final String DIRECT_URL = Constants.DIRECT_URL;
 //	public static final String DIRECT_URL = "https://csta14-5.cs.wpi.edu:8443/direct";
 //	public static final String DIRECT_URL ="http://www.assistmentsdirect.org";
 	public static final String LOGIN_FAILURE = DIRECT_URL + "/login_failure";
@@ -410,6 +410,24 @@ public class LiteUtility {
 		String fakeEmail = time.toString() + "@als.com";
 		user.setEmail(fakeEmail);
 		user.setUsername(time.toString());
+		user.setTimeZone(TIMEZONE);
+		user.setRegistrationCode(REGISTRATION_CODE);
+		return user;
+	}
+	
+	public static User populateTeacherInfo(String firstName, String lastName,
+			String displayName, String email) {
+		User user = new User();
+		user.setUserType(Constants.PRINCIPAL);
+		user.setPassword(LiteUtility.PASSWORD);
+		user.setFirstName(firstName);
+		user.setLastName(lastName);
+		user.setDisplayName(displayName);
+
+//		Long time = uniqueCurrentTimeMS();
+//		String fakeEmail = time.toString() + "@als.com";
+		user.setEmail(email);
+		user.setUsername(email);
 		user.setTimeZone(TIMEZONE);
 		user.setRegistrationCode(REGISTRATION_CODE);
 		return user;

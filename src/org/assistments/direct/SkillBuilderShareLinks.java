@@ -33,6 +33,7 @@ public class SkillBuilderShareLinks extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doPost(request, response);
 	}
@@ -40,6 +41,7 @@ public class SkillBuilderShareLinks extends HttpServlet {
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		Integer[] folderIds = new Integer[]{186686, 177818, 177817, 177556, 177557, 177558, 177559, 177560, 177568, 198227, 198228};
 		List<Integer> folderIdList = Arrays.asList(folderIds);

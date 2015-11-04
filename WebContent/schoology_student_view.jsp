@@ -65,7 +65,7 @@ var toolSelected = "";
 			var id = $(this).attr("id");
 			if(id == "landing_page" || id == "logo"){
 				toolSelected = "landing_page";
-				window.location.assign("/direct/SchoologyAppsLandingPage");
+				window.location.assign("/direct/schoology_student_view.jsp");
 			}else if(id == "skill_builder_page"){
 				toolSelected = "skill_builder_link";
 				window.location.assign("/direct/SkillBuilderGoogleClassroom?folder_id=22&tool_type=skill_builder");
@@ -110,100 +110,40 @@ var toolSelected = "";
 	</nav>
 
 	<!-- Main jumbotron for a primary marketing message or call to action -->
-	<div class="jumbotron" style="background-color:white; height:600px;">
-		<div class="container">			
-			<div>
+	<div class="jumbotron" style="background-color: white; height: 600px;">
+		<div class="container">
 
-				<!-- Nav tabs -->
-				<ul class="nav nav-tabs" role="tablist">
-					<li role="presentation" class="active"><a
-						href="#content_to_assign" aria-controls="content_to_assign"
-						role="tab" data-toggle="tab"> <span style="font-size: 125%;">Content to Assign</span></a></li>
-					<li role="presentation"><a href="#assignments"
-						aria-controls="assignments" role="tab" data-toggle="tab"><span style="font-size: 125%;">Assignments</span></a></li>
-				</ul>
 
-				<!-- Tab panes -->
-				<div class="tab-content">
-					<div role="tabpanel" class="tab-pane fade in active" id="content_to_assign">
-						<div class="row" style="margin-top: 100px;">
-							<div class="col-md-2 col-md-offset-1">
-								<div id="skill_builder_link" class="apps_link">
-									<h2>
-										<center>
-											<img src="images/assistments_app_math.png"
-												style="width: 90px;">
-										</center>
-									</h2>
-									<h3>
-										<center>Math Skill Builders</center>
-									</h3>
-								</div>
-							</div>
-							<div class="col-md-2 col-md-offset-2">
-								<div id="ap_statistics_link" class="apps_link">
-									<h2>
-										<center>
-											<img src="images/assistments_app_ap.png" style="width: 90px;">
-										</center>
-									</h2>
-									<h3>
-										<center>AP Statistics</center>
-									</h3>
-								</div>
-							</div>
-							<div class="col-md-2 col-md-offset-2">
-								<div id="chemistry_link" class="apps_link">
-									<h2>
-										<center>
-											<img src="images/assistments_app_chemistry.png"
-												style="width: 90px;">
-										</center>
-									</h2>
-									<h3>
-										<center>Chemistry</center>
-									</h3>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div role="tabpanel" class="tab-pane fade" id="assignments">
-					
-						<table class="table table-hover table-striped" style="margin: 50px 0 0 50px; font-size: 125%;">
-							<thead>
-								<tr>
-									<th>Assignments</th><th></th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td>Assignment 1</td> <td></td>
-								</tr>
-								<tr>
-									<td>Assignment 2</td> <td></td>
-								</tr>
-								<tr>
-									<td>Assignment 3</td> <td></td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>
-
-			</div> 
-			
-		<div id="resp_message">${sessionScope.json }</div>
-		<div id="alert_panel" style="display:none; margin-top:30px;" class="alert alert-warning alert-dismissible fade in" role="alert">
-		<!-- <button class='close' aria-label='Close' data-dismiss='alert' type='button'><span aria-hidden='true'>&times;</span></button> -->
-			<p><center style="font-size:1.6em;">This feature is still under construction.</center></p>
-		</div>
+			<table class="table table-hover table-striped"
+				style="font-size: 125%;">
+				<thead>
+					<tr>
+						<th>Assignments</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Assignment 1</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>Assignment 2</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>Assignment 3</td>
+						<td></td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
 	</div>
 
+
+
 	<div class="container footer_section" >
-
 		<hr>
-
 		<footer>
 		<p>&copy; ASSISTments 2015</p>
 		</footer>

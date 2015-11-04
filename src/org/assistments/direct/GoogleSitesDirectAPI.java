@@ -7,12 +7,11 @@ import java.security.GeneralSecurityException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -20,17 +19,18 @@ import org.assistments.connector.service.ProblemSetService;
 import org.assistments.connector.service.ShareLinkService;
 import org.assistments.connector.service.impl.ProblemSetServiceImpl;
 import org.assistments.connector.service.impl.ShareLinkServiceImpl;
-import org.assistments.connector.utility.Utils;
 import org.assistments.dao.ConnectionFactory;
 import org.assistments.service.domain.FolderItem;
 import org.assistments.service.domain.ProblemSet;
 import org.assistments.service.domain.ShareLink;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.gdata.client.sites.SitesService;
@@ -45,54 +45,46 @@ import com.google.gdata.data.sites.ContentFeed;
 import com.google.gdata.data.sites.SiteEntry;
 import com.google.gdata.data.sites.SitesAclFeedLink;
 import com.google.gdata.data.sites.WebPageEntry;
+import com.google.gdata.util.InvalidEntryException;
 import com.google.gdata.util.ServiceException;
 import com.google.gdata.util.XmlBlob;
-
+import com.google.gson.JsonObject;
 @Controller
-public class GoogleAppsDemo {
-
-	@RequestMapping(value = "/google_apps", method = RequestMethod.GET)
-	public String init(HttpSession session) {
-		//load share links for this teacher
-		String[] problemSets = {
-				"PSAP7AH", "PSACQ9T", "PSACQ92", "PSAQYSY", "PSAQBPQ"
-				};
-		
-		ProblemSetService pss = new ProblemSetServiceImpl();
-		ShareLinkService sls = new ShareLinkServiceImpl(LiteUtility.PARTNER_REF);
-		
-		String userId = "260765";
-		List<Map<String, String>> problemSetsInfo = new ArrayList<>();
-		
-		for(int i=0; i < problemSets.length; i++) {
-			Map<String, String> info = new HashMap<>();
-			String strId = Utils.decodeProblemSetString(problemSets[i]);
-			ProblemSet ps = pss.find(Integer.valueOf(strId));
-			String shareLinkRef = sls.create(userId, String.valueOf(ps.getDecodedID()), "generic", true);
-
-			String problemSetName = ps.getName();
-			int problemSetId = ps.getDecodedID();
-			info.put("id", strId);
-			info.put("name", problemSetName);
-			session.setAttribute("problem_set_name", problemSetName);
-			session.setAttribute("problem_set", problemSetId);
-			session.setAttribute("share_link_ref", shareLinkRef);
-			problemSetsInfo.add(info);
-		}
-		
-		session.setAttribute("shared_problem_sets", problemSetsInfo);
-		return "google_apps";
+@RequestMapping(value = "/google_sites_api/v1")
+public class GoogleSitesDirectAPI{
+	@Autowired
+	ServletContext servletContext;
+	@RequestMapping(value = "/create", method = {RequestMethod.GET, RequestMethod.POST})
+	public String beforeCreate(@RequestParam Map<String, Object> req, HttpSession session, RedirectAttributes redirectAttributes){
+		System.out.println("here");
+		System.out.println(req.get("owner_id").toString());
+		servletContext.setAttribute("owner_id", req.get("owner_id"));
+		servletContext.setAttribute("folder_id", req.get("folder_id"));
+		servletContext.setAttribute("site_name", req.get("site_name"));
+		servletContext.setAttribute("link_type", req.get("link_type"));
+		servletContext.setAttribute("assistments_verified", req.get("assistments_verified"));
+		servletContext.setAttribute("form", req.get("form"));
+		servletContext.setAttribute("url", req.get("url"));
+		servletContext.setAttribute("from", "create");
+		return "redirect:/s/google_sites_api/v1/checkAuth";
+//		redirectAttributes.addAttribute("owner_id", distributorId);
+//		redirectAttributes.addAttribute("folder_id", req.get("folder_id"));
+//		redirectAttributes.addAttribute("site_name", req.get("site_name"));
+//		redirectAttributes.addAttribute("link_type", req.get("link_type"));
+//		redirectAttributes.addAttribute("assistments_verified", req.get("assistments_verified"));
+//		redirectAttributes.addAttribute("form", req.get("form"));
+//		redirectAttributes.addAttribute("url", req.get("url"));
+//		return "redirect:/s/google_sites_api/v1/create_sites";
 	}
 	
-	@RequestMapping(value = "/google_sites", method = RequestMethod.GET)
-	public String google_sites() {
-		return "google_sites";
-	}
-	
-	@RequestMapping(value="/create_google_sites", method = RequestMethod.POST)
-	public ResponseEntity<Map<String, Object>> setup(@RequestParam Map<String, Object> req) 
-			throws MalformedURLException, IOException, ServiceException {
+	@RequestMapping(value = "/create_sites", method = {RequestMethod.GET, RequestMethod.POST})
+	public ResponseEntity<String> create(@RequestParam Map<String,Object> req, HttpSession session){
 		String accessToken = (String)req.get("access_token");
+		if(accessToken.equals("UNAUTHORIZED")){
+			JsonObject json = new JsonObject();
+			json.addProperty("message", "unauthorized");
+			return new ResponseEntity<String>(json.toString(), HttpStatus.UNAUTHORIZED);
+		}
 		
 		GoogleCredential credential = new GoogleCredential().setAccessToken(accessToken);
 		
@@ -111,8 +103,24 @@ public class GoogleAppsDemo {
 		SitesService service = new SitesService(applicationName);
 		service.setOAuth2Credentials(credential);
 		
-		
-		siteEntry = service.insert(new URL(getSiteFeedUrl(domain)), siteEntry);
+		try {
+			siteEntry = service.insert(new URL(getSiteFeedUrl(domain)), siteEntry);
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidEntryException e) {
+			// TODO Auto-generated catch block
+			JsonObject json = new JsonObject();
+			json.addProperty("message", "duplicate_site_name");
+			return new ResponseEntity<String>(json.toString(), HttpStatus.BAD_REQUEST);
+		} catch (ServiceException e){
+			JsonObject json = new JsonObject();
+			json.addProperty("message", "not_apps_account");
+			return new ResponseEntity<String>(json.toString(), HttpStatus.FORBIDDEN);
+		}
 		siteName = siteEntry.getSiteName().getValue();
 
 		AclRole role = new AclRole("writer");
@@ -123,7 +131,20 @@ public class GoogleAppsDemo {
 		aclEntry.setScope(scope);
 
 		Link aclLink = siteEntry.getLink(SitesAclFeedLink.Rel.ACCESS_CONTROL_LIST, Link.Type.ATOM);
-		service.insert(new URL(aclLink.getHref()), aclEntry);
+		try {
+			service.insert(new URL(aclLink.getHref()), aclEntry);
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ServiceException e) {
+			// TODO Auto-generated catch block
+			JsonObject json = new JsonObject();
+			json.addProperty("message", "duplicate_site_name2");
+			return new ResponseEntity<String>(json.toString(), HttpStatus.BAD_REQUEST);
+		}
 		String folderId = (String)req.get("folder_id");
 		ProblemSetService pss = new ProblemSetServiceImpl();
 		ShareLinkService sls = new ShareLinkServiceImpl(LiteUtility.PARTNER_REF);
@@ -134,7 +155,7 @@ public class GoogleAppsDemo {
 //		List<Map<String,String>> folders = pss.getFoldersByIds(folderIdList);
 		
 		Iterator<Map<String, String>> iter = folders.iterator();
-		
+		System.out.println((String)req.get("form"));
 		String linkType = (String)req.get("link_type");
 		String assistmentsVerified = (String)req.get("assistments_verified");
 		boolean isAssistmentsVerified = (assistmentsVerified.equals("true")) ? true : false;
@@ -204,16 +225,40 @@ public class GoogleAppsDemo {
 			entry.setContent(new XhtmlTextConstruct(xml));
 			entry.setTitle(new PlainTextConstruct(folderName));
 			
-			service.insert(new URL(getContentFeedUrl(domain, siteName)), entry);
+			try {
+				service.insert(new URL(getContentFeedUrl(domain, siteName)), entry);
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ServiceException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
-		
-		Map<String, Object> resp = new HashMap<>();
-		return new ResponseEntity<Map<String,Object>>(resp, HttpStatus.OK);
-		
+		String sitesUrl = "https://sites.google.com/a/gedu.demo.assistmentstestbed.org/" + siteName + "/";
+		JsonObject json = new JsonObject();
+		json.addProperty("url", sitesUrl);
+		return new ResponseEntity<String>(json.toString(), HttpStatus.OK);
 	}
 	
-	@RequestMapping(value="/update_google_sites", method = RequestMethod.POST)
-	public ResponseEntity<Map<String, Object>> update(@RequestParam Map<String, Object> req) throws MalformedURLException, IOException, ServiceException{
+	@RequestMapping(value="/update", method = {RequestMethod.GET, RequestMethod.POST})
+	public String beforeUpdate(@RequestParam Map<String, Object> req, HttpSession session, RedirectAttributes redirectAttributes){
+		redirectAttributes.addAttribute("owner_id", req.get("owner_id"));
+		redirectAttributes.addAttribute("folder_id", req.get("folder_id"));
+		redirectAttributes.addAttribute("site_name", req.get("site_name"));
+		redirectAttributes.addAttribute("link_type", req.get("link_type"));
+		redirectAttributes.addAttribute("assistments_verified", req.get("assistments_verified"));
+		redirectAttributes.addAttribute("form", req.get("form"));
+		redirectAttributes.addAttribute("url", req.get("url"));
+		redirectAttributes.addAttribute("from", "update");
+		return "redirect:/s/google_sites_api/v1/checkAuth";
+	}
+	
+	@RequestMapping(value="/update_sites", method = {RequestMethod.GET, RequestMethod.POST})
+	public ResponseEntity<String> update(@RequestParam Map<String, Object> req, HttpSession session) throws IOException, ServiceException{
 		
 		String accessToken = (String)req.get("access_token");
 		GoogleCredential credential = new GoogleCredential().setAccessToken(accessToken);
@@ -222,8 +267,21 @@ public class GoogleAppsDemo {
 		siteUrl = siteUrl.substring(siteUrl.lastIndexOf(domain));
 		SitesService service = new SitesService("direct");
 		service.setOAuth2Credentials(credential);
-		ContentFeed contentFeed = service.getFeed(
-			    new URL("https://sites.google.com/feeds/content/"+siteUrl), ContentFeed.class);
+		ContentFeed contentFeed = null;
+		try {
+			contentFeed = service.getFeed(
+				    new URL("https://sites.google.com/feeds/content/"+siteUrl), ContentFeed.class);
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ServiceException e){
+			JsonObject json = new JsonObject();
+			json.addProperty("message", "not_apps_account");
+			return new ResponseEntity<String>(json.toString(), HttpStatus.FORBIDDEN);
+		}
 		List<BaseContentEntry> webPages = contentFeed.getEntries();
 		BaseContentEntry homeEntry = new WebPageEntry();
 		for(BaseContentEntry baseContentEntry : webPages){
@@ -318,28 +376,52 @@ public class GoogleAppsDemo {
 		}
 		service.insert(new URL("https://sites.google.com/feeds/content/"+siteUrl), homeEntry);
 		
-		Map<String, Object> resp = new HashMap<>();
-		return new ResponseEntity<Map<String, Object>>(resp, HttpStatus.OK);
+		JsonObject json = new JsonObject();
+		String siteUrl2 = (String)req.get("site_url");
+		json.addProperty("url", siteUrl2);
+		return new ResponseEntity<String>(json.toString(), HttpStatus.OK);
 	}
 	
-	@RequestMapping(value="/migration", method = RequestMethod.GET)
-	public void migration() {
-		try {
-			Connection conn = ConnectionFactory.getInstance().getConnection();
-			String sql = "alter table share_links alter column form Type character varying(256)";
-			Statement pstmt = conn.createStatement();
-			pstmt.execute(sql);
-			
-			sql = "alter table share_links alter column url Type character varying(256)";
-			pstmt.execute(sql);
-			
-			sql = "ALTER TABLE share_links ADD COLUMN assistments_verified BOOLEAN";
-			pstmt.execute(sql);
-			
-			pstmt.close();
-			conn.close();
-		} catch (SQLException e) {
-			new RuntimeException(e);
+	@RequestMapping(value="/checkAuth", method = {RequestMethod.POST, RequestMethod.GET})
+	public String checkAuthorization(@RequestParam Map<String, Object> req, HttpSession session, RedirectAttributes redirectAttributes){
+		String accessToken = (String)servletContext.getAttribute("access_token");
+		if(accessToken == null) {
+			accessToken = (String)req.get("access_token");
+			servletContext.setAttribute("access_token", accessToken);
+		}
+		if(accessToken == null) {
+//			redirectAttributes.addAttribute("owner_id", req.get("owner_id"));
+//			redirectAttributes.addAttribute("folder_id", req.get("folder_id"));
+//			redirectAttributes.addAttribute("site_name", req.get("site_name"));
+//			redirectAttributes.addAttribute("link_type", req.get("link_type"));
+//			redirectAttributes.addAttribute("assistments_verified", req.get("assistments_verified"));
+//			redirectAttributes.addAttribute("form", req.get("form"));
+//			redirectAttributes.addAttribute("url", req.get("url"));
+//			redirectAttributes.addAttribute("from", req.get("from"));
+			return "redirect:/GoogleSitesServelet";
+		}
+		switch(servletContext.getAttribute("from").toString()){
+		case "create":
+//			redirectAttributes.addAttribute("owner_id", servletContext.getAttribute("owner_id"));
+//			redirectAttributes.addAttribute("folder_id", servletContext.getAttribute("folder_id"));
+//			redirectAttributes.addAttribute("site_name", servletContext.getAttribute("site_name"));
+//			redirectAttributes.addAttribute("link_type", servletContext.getAttribute("link_type"));
+//			redirectAttributes.addAttribute("assistments_verified", servletContext.getAttribute("assistments_verified"));
+//			redirectAttributes.addAttribute("form", servletContext.getAttribute("form"));
+//			redirectAttributes.addAttribute("url", servletContext.getAttribute("url"));
+			return "redirect:/s/google_sites_api/v1/create_sites";
+		case "update":
+			redirectAttributes.addAttribute("owner_id", servletContext.getAttribute("owner_id"));
+			redirectAttributes.addAttribute("folder_id", servletContext.getAttribute("folder_id"));
+			redirectAttributes.addAttribute("site_url", servletContext.getAttribute("site_name"));
+			redirectAttributes.addAttribute("link_type", servletContext.getAttribute("link_type"));
+			redirectAttributes.addAttribute("assistments_verified", servletContext.getAttribute("assistments_verified"));
+			redirectAttributes.addAttribute("form", servletContext.getAttribute("form"));
+			redirectAttributes.addAttribute("url", servletContext.getAttribute("url"));
+			return "redirect:/s/google_sites_api/v1/update_sites";
+		default:
+			System.out.println("404");
+			return "redirect:/404";
 		}
 	}
 	
@@ -362,25 +444,5 @@ public class GoogleAppsDemo {
 	    public String getAclFeedUrl(String domain, String siteName) {
 	      return "https://sites.google.com/feeds/acl/site/" + domain + "/" + siteName + "/";
 	    }
-	    
-	public static void main(String[] args) throws GeneralSecurityException, IOException, ServiceException {
-		try {
-			Connection conn = ConnectionFactory.getInstance().getConnection();
-			String sql = "alter table share_links alter column form Type character varying(256)";
-			Statement pstmt = conn.createStatement();
-			pstmt.execute(sql);
-			
-			sql = "alter table share_links alter column url Type character varying(256)";
-			pstmt.execute(sql);
-			
-			sql = "ALTER TABLE share_links ADD COLUMN assistments_verified BOOLEAN";
-			pstmt.execute(sql);
-			
-			pstmt.close();
-			conn.close();
-		} catch (SQLException e) {
-			new RuntimeException(e);
-		}
-		System.out.println("Done");
-	}
+
 }

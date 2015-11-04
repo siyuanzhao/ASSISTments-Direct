@@ -9,12 +9,12 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-<link rel="stylesheet" href="${initParam.path}/stylesheets/styles.css">
+<link rel="stylesheet" href="/stylesheets/styles.css">
 </head>
 <body>	
 	<div class="banner">
 		<div class="container">
-			<img alt="ASSISTments" src="${initParam.path}images/direct_logo.gif" height="50px;" width="250px;" 
+			<img alt="ASSISTments" src="/images/direct_logo.gif" height="50px;" width="250px;" 
 				style="position: relative; top: 5px; float: left;">
 		</div>
 	</div>

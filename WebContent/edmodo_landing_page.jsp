@@ -14,8 +14,10 @@
 <link href="../stylesheets/bootstrap.min.css" rel="stylesheet">
 <!-- Optional theme -->
 <link href="../stylesheets/bootstrap-theme.min.css" rel="stylesheet">
+<link rel="stylesheet" href="stylesheets/datepicker.css">
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/bootstrap-datepicker.js"></script> 
 <script
 	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
 <style type="text/css">
@@ -51,12 +53,16 @@ var toolSelected = "";
 			if(toolSelected  == "skill_builder_link"){
 				window.location.assign("/direct/SkillBuilderEdmodoClassroom?folder_id=22&tool_type=skill_builder");
 			}else if(toolSelected == "ap_statistics_link"){
-				window.location.assign("/direct/SkillBuilderGoogleClassroom?folder_id=210644&tool_type=ap_statistics");
+				window.location.assign("/direct/SkillBuilderEdmodoClassroom?folder_id=210644&tool_type=ap_statistics");
 			}else if(toolSelected == "chemistry_link"){
-				window.location.assign("/direct/SkillBuilderGoogleClassroom?folder_id=226695&tool_type=chemistry");
+				window.location.assign("/direct/SkillBuilderEdmodoClassroom?folder_id=226695&tool_type=chemistry");
 			}
 			
 		});
+		$('.datepicker').datepicker(/* {
+			    format: 'mm/dd/yyyy',
+			    startDate: '-3d'
+			} */)
 		
 		$(".navbar_item").click(function(){
 			$("#alert_panel").hide();
@@ -113,6 +119,7 @@ var toolSelected = "";
 				<li><a id="ap_page" class="navbar_item" >AP Statistics</a></li>
 				<li><a id="chemistry_page" class="navbar_item" >Chemistry</a></li>
 			</ul>
+		
 		</div>
 		<!--/.navbar-collapse -->
 	</div>

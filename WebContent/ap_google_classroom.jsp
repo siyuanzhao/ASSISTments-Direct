@@ -13,9 +13,10 @@
 <!-- Bootstrap core CSS -->
 <link href="stylesheets/bootstrap.min.css" rel="stylesheet">
 <link href="stylesheets/bootstrap-tour.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 <!-- Optional theme -->
 <link href="stylesheets/bootstrap-theme.min.css" rel="stylesheet">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script type="text/javascript" src="js/bootstrap.min.js"></script>
 <script type="text/javascript" src="js/bootstrap-tour.min.js"></script>
 <script type="text/javascript" src="js/jquery-ui.min.js"></script>
@@ -55,6 +56,7 @@ var link_to_share = "";
 var instruction = "Each assignment is a skill builder. Students work on one skill until they get three right in a row."
 				+" Click on the name for a sample of the problems and the green icon to assign to your class.";
 var toolSelected = "";
+var firstName, lastName, emailAddr;
 var tour;
 	$(function() {
 		$('.js-loading-bar').modal({
@@ -78,7 +80,8 @@ var tour;
 			$.ajax({
 				url: 'google_classroom/setup',
 				type: 'POST',
-				data: {course_id: course_id, course_name: course_name, email: ownerId, problem_set_id: problem_set_id},
+				data: {course_id: course_id, course_name: course_name, email: ownerId, problem_set_id: problem_set_id,
+					first_name: firstName, last_name: lastName, email_address: emailAddr},
 				async: false,
 				success: function(data) {
 					console.log(problem_set_name);
@@ -113,7 +116,7 @@ var tour;
 				window.location.assign("/direct/GoogleAppsLandingPage");
 			}else if(id == "skill_builder_page"){
 				toolSelected = "skill_builder_link";
-				window.location.assign("/direct/SkillBuilderGoogleClassroom?folder_id=177540&tool_type=skill_builder");
+				window.location.assign("/direct/SkillBuilderGoogleClassroom?folder_id=22&tool_type=skill_builder");
 			}else if (id == "ap_page"){
 				toolSelected = "ap_statistics_link";
 				window.location.assign("/direct/SkillBuilderGoogleClassroom?folder_id=210644&tool_type=ap_statistics");
@@ -209,7 +212,7 @@ var tour;
 						gapi.auth.authorize({
 							 'client_id': CLASSROOM_CLIENT_ID,
 							 'scope': SCOPES,
-							 'immediate': false}, handleAuthResult);
+							 'immediate': true}, handleAuthResult);
 					});
 					$("body").css("cursor", "initial");
 					$("#progressModal").modal("hide");
@@ -258,6 +261,16 @@ var tour;
 		    //get user profile
 		    var request = gapi.client.request({
 				root : 'https://classroom.googleapis.com',
+				path : 'v1/userProfiles/me',
+			});
+
+			request.execute(function(resp) {
+				firstName = resp.name.givenName; 
+				lastName = resp.name.familyName;
+				emailAddr = resp.emailAddress
+			});
+		    var request = gapi.client.request({
+				root : 'https://classroom.googleapis.com',
 				path : 'v1/courses',
 				params: {
 					teacherId: 'me'
@@ -269,40 +282,46 @@ var tour;
 		    	//first check if the user has the permission to classroom
 		    	if(resp.error != null) {
 		    		if(resp.error.code == 403) {
-		    			$("#classroom_message").html("Sorry... Google Classroom is not available for your google account at this time.");
-		    			$("#classroom_message").css("color", "blue");
-			    		$("#classroom_message").show();
-			    		$("#classroom_message_alert").slideDown();
+		    			$("#message_body").html("Sorry... Google Classroom is not available for your google account at this time.");
+		    			$("#message_body").css("color", "blue");
+		    			$('#message_modal').modal('show');
 			    		return;
 		    		}
-		    		$("#classroom_message").html("Sorry... Something goes wrong here with Google Classroom. But we have no idea what causes the problem.");
-		    		$("#classroom_message").css("color", "red");
-		    		$("#classroom_message").show();
-		    		$("#classroom_message_alert").slideDown();
+		    		$("#message_body").html("Sorry... Something goes wrong here with Google Classroom. But we have no idea what causes the problem.");
+		    		$("#message_body").css("color", "red");
+		    		$('#message_modal').modal('show');
 		    		return;
 		    	}
 		    	var courses = resp.courses;
 		    	$("#courses_select").html("");
 		    	if(courses == null) {
-		    		console.log("You don't have any course!");
-		    		$("#classroom_message").html("Sorry... You don't have any course!<br> You should at least have a course in Google Classroom.");
-		    		$("#classroom_message").css("color", "blue");
-		    		$("#classroom_message").show();
-		    		$("#classroom_message_alert").slideDown();
+		    		$("#message_body").html("Sorry... You don't have any class!<br> You should at least have a class in Google Classroom.");
+		    		$("#message_body").css("color", "blue");
+		    		$('#message_modal').modal('show');
 		    	} else if ((courses.length > 0)) {
 		    		var i = 0;
 		    		for(i=0; i < courses.length; i++) {
 		    			var course = courses[i];
 		    			ownerId = course.ownerId;
 		    			if(course.courseState == 'ACTIVE') {
-		    				$("#courses_select").append($("<option></option>")
-		    					.attr("value", course.id)
-		    					.html(course.name + " - " + course.section));
+		    				if(course.section != null) {
+		    					$("#courses_select").append($("<option></option>")
+		    						.attr("value", course.id)
+		    						.html(course.name + " - " + course.section));
+		    				} else {
+		    					$("#courses_select").append($("<option></option>")
+			    						.attr("value", course.id)
+			    						.html(course.name));
+		    				}
 		    			}
 		    		}
 		    		$('#myModal').modal('show');
 		    	}
 		    });
+		} else {
+			$("#message_body").html("It seems that you don't log into Google. Please sign into Google first and then access the app.");
+    		$("#message_body").css("color", "blue");
+    		$('#message_modal').modal('show');
 		}
 		
 	}
@@ -364,8 +383,11 @@ var tour;
 				</div>
 				<div class="modal-body">
 					<form class="pure-form" id="courses_form">
-						<div style="text-align: center; margin: 30px 0 0 0;">
-							<div style="margin: 20px 0 0 0;"></div>
+						<div style="text-align: left; margin: 30px 0 0 0;">
+							<div style="margin: 30px 0 50px 0;">
+							<span class="glyphicon glyphicon-info-sign"></span>
+								The app needs you to choose the class <b>before</b> it reaches out to Google.  You will need to choose the same class again on the next screen. 
+							</div>
 							<select id="courses_select" class="form-control">
 							</select><br>
 							<br>
@@ -394,5 +416,22 @@ var tour;
    </div>
  </div>
 </div>
+
+<div class="modal fade" id="message_modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Message</h4>
+      </div>
+      <div class="modal-body">
+        <p id="message_body"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 </body>
 </html>

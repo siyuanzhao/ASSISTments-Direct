@@ -8,8 +8,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Math Skill Builders</title>
 <link rel="shortcut icon" href="images/shortcut_logo.png">
+<link rel="stylesheet" href="stylesheets/bootstrap.css">
 <link rel="stylesheet" href="stylesheets/jquery-ui.css">
 <link rel="stylesheet" href="stylesheets/sharelinks.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/css/bootstrap-datepicker.min.css">
 <!-- Bootstrap core CSS -->
 <link href="stylesheets/bootstrap.min.css" rel="stylesheet">
 <link href="stylesheets/bootstrap-tour.min.css" rel="stylesheet">
@@ -17,13 +19,13 @@
 <!-- Optional theme -->
 <link href="stylesheets/bootstrap-theme.min.css" rel="stylesheet">
 <link href="stylesheets/bootstrap-select.min.css" rel="stylesheet">
+<script type="text/javascript" src="js/jquery.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 <script type="text/javascript" src="js/bootstrap.min.js"></script>
 <script type="text/javascript" src="js/bootstrap-tour.min.js"></script>
 <script type="text/javascript" src="js/bootstrap-select.min.js"></script>
- <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
- <script src="https://apis.google.com/js/platform.js" async defer></script>
- <script src="https://apis.google.com/js/client.js"></script>
+<script type="text/javascript" 
+	src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.min.js"></script>  
 <style type="text/css">
 li {
 	list-style-type: none;
@@ -64,6 +66,7 @@ var tour;
 			  backdrop: 'static',
 			  show: false
 			});
+		
 		//set the nav bar active item
 		var toolType = $("#tool_type").val();
 		if(toolType == "skill_builder"){
@@ -105,28 +108,33 @@ var tour;
 				}
 			});
 		});
+	
 		
 		$(".nav-sidebar li:nth-child(5) a").click();
 	 	$("#share_to_edmodo_btn").click(function(e) {
 			var course_id = $("#courses_select").val(); 
+			
 			var course_name = $("#courses_select option:selected").text();
+			var due_date = $('.datepicker').val();
+			
 			var link_to_share = "";
 			$(this).addClass("disabled");
 			$.ajax({
 				url: 's/edmodo/setup',
 				type: 'POST',
-				data: {course_id: course_id, course_name: course_name, problem_set_id: problem_set_id},
+				data: {course_id: course_id, course_name: course_name, problem_set_id: problem_set_id,due_date: due_date},
 				async: false,
 				success: function(data) {
 					$("#assignment_info").html("Assignment Created Successfully!");
 					$("#assignment_info").show(700);
+				
 				},
 				error: function(data) {
 					console.log(data);
 					return;
 				}
 			});
-			$("#share_to_classroom_btn").removeClass("disabled");
+			$("#share_to_edmodo_btn").removeClass("disabled");
 		}); 
 		(function ($) {
 			
@@ -146,7 +154,7 @@ var tour;
 			var id = $(this).attr("id");
 			if(id == "landing_page" || id == "logo"){
 				toolSelected ="landing_page";
-				window.location.assign("/direct/s/EdmodoAppsLandingPage/");
+				window.location.assign("/direct/s/edmodo_app");
 			}else if(id == "skill_builder_page"){
 				toolSelected = "skill_builder_link";
 				window.location.assign("/direct/SkillBuilderEdmodoClassroom?folder_id=22&tool_type=skill_builder");
@@ -240,7 +248,17 @@ var tour;
 					    					.html(group.group_name));	
 								}
 								$('.selectpicker').selectpicker('refresh');
+								
 								$('#myModal').modal('show');
+								  $('.datepicker').datepicker( {
+									   autoclose: true,
+								    format: 'yyyy-mm-dd',
+								    startDate: '+d',
+								    setDate: new Date(), 
+									 
+								} )  
+								  $('.datepicker').datepicker("setDate", new Date()); 
+								
 							},
 							error: function(data) {
 								console.log(data);
@@ -296,6 +314,7 @@ var tour;
 <body>
 	<nav class="navbar navbar-inverse navbar-fixed-top">
 	<div class="container_customize">
+	 	
 		<div class="navbar-header">
 			<button type="button" class="navbar-toggle collapsed"
 				data-toggle="collapse" data-target="#navbar" aria-expanded="false"
@@ -333,6 +352,7 @@ var tour;
 				</c:forEach>
 				</ul>
 			</div>
+				
 			<div class="col-md-10 col-md-offset-2 col-sm-10 col-sm-offset-2 main">
           		<h1 class="page-header"></h1>
           		<!-- <div class="alert alert-info" role="alert" ><h4 id="instruction" style="margin:10px 5px 10px 5px;"></h4></div> -->
@@ -356,6 +376,9 @@ var tour;
 				<div class="modal-body">
 					<select id="courses_select" class="selectpicker"  title='Choose class' data-width="70%">
 					</select><br>
+					<br>
+					<h5 >Choose due date</h5>
+					 <input class="datepicker" data-provide="datepicker" data-date-format="yyyy-mm-dd"> 
 					<br>
 				</div>
 				<div class="alert alert-info" role="alert" id="assignment_info"></div>

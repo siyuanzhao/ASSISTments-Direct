@@ -1,18 +1,4 @@
-package org.assistments.direct.teacher;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.servlet.Servlet;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+package org.assistments.direct;
 
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.client.extensions.servlet.auth.oauth2.AbstractAuthorizationCodeServlet;
@@ -21,29 +7,39 @@ import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 
+import java.io.IOException;
+import java.util.Collections;
+
+import javax.servlet.Servlet;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 /**
- * Servlet implementation class SpreadSheetServelet
+ * Servlet implementation class GoogleSitesServelet
  */
-@WebServlet("/SpreadSheetServelet")
-public class SpreadSheetServelet extends AbstractAuthorizationCodeServlet implements Servlet {
+@WebServlet("/GoogleSitesServelet")
+public class GoogleSitesServelet extends AbstractAuthorizationCodeServlet implements Servlet {
 	private static final long serialVersionUID = 1L;
-	private final String CLIENT_ID = "868469417184-ava3g9j9t1c5q4ntif5qgr36v0m2pis4.apps.googleusercontent.com";
-	private final String CLIENT_SECRET = "MZHG7lHHH36w3Fp4UXY70Xzt";
-	private Set<String> scopes = new HashSet<String>();
+	private final String CLIENT_ID = "757036402283-8o3nu8pdve8snhj8ds11te8bnsrnmuu6.apps.googleusercontent.com";
+	private final String CLIENT_SECRET = "hxaYp2ZY3RN3a1Zmpb3kd-G0";
     /**
      * @see AbstractAuthorizationCodeServlet#AbstractAuthorizationCodeServlet()
      */
-    public SpreadSheetServelet() {
+    public GoogleSitesServelet() {
         super();
         // TODO Auto-generated constructor stub
     }
 
-	
+	/**
+	 * @see Servlet#init(ServletConfig)
+	 */
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		// TODO Auto-generated method stub
-		scopes.add("https://spreadsheets.google.com/feeds");
-		scopes.add("https://docs.google.com/feeds");
 	}
 
 	/**
@@ -52,7 +48,6 @@ public class SpreadSheetServelet extends AbstractAuthorizationCodeServlet implem
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		System.out.println("it gets here!");
 	}
 
 	/**
@@ -68,24 +63,36 @@ public class SpreadSheetServelet extends AbstractAuthorizationCodeServlet implem
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		GenericUrl url = new GenericUrl(request.getRequestURL().toString());
-	    url.setRawPath("/direct/SpreadSheetCallBackServelet");
+//		StringBuilder redirectParams = new StringBuilder();
+//		redirectParams.append("?owner_id=").append(request.getAttribute("distributor_id"))
+//					  .append("&folder_id=").append(request.getAttribute("folder_id"))
+//					  .append("&site_name=").append(request.getAttribute("site_name"))
+//					  .append("&link_type=").append(request.getAttribute("link_type"))
+//					  .append("&assistments_verified=").append(request.getAttribute("assistments_verified"))
+//					  .append("&form=").append(request.getAttribute("form"))
+//					  .append("&url=").append(request.getAttribute("url"))
+//					  .append("&from=").append(request.getAttribute("from"));
+	    url.setRawPath("/direct/GoogleSitesCallBackServlet");
 	    return url.build();
 	}
 
 	@Override
 	protected String getUserId(HttpServletRequest request)
 			throws ServletException, IOException {
+		// TODO Auto-generated method stub
 		HttpSession session = request.getSession();
-		return session.getAttribute("email").toString();
+		return "307910";
+//		return session.getAttribute("distributor_id").toString();
 	}
 
 	@Override
 	protected AuthorizationCodeFlow initializeFlow() throws ServletException,
 			IOException {
+		// TODO Auto-generated method stub
 		return new GoogleAuthorizationCodeFlow.Builder(
 		        new NetHttpTransport(), JacksonFactory.getDefaultInstance(),
 		        CLIENT_ID, CLIENT_SECRET,
-		        Collections.singleton("https://spreadsheets.google.com/feeds")).build();
+		        Collections.singleton("https://sites.google.com/feeds/")).build();
 	}
 
 }

@@ -1,4 +1,4 @@
-package org.assistments.direct;
+package org.assistments.direct.google;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -22,6 +22,7 @@ import org.assistments.connector.service.impl.AssignmentServiceImpl;
 import org.assistments.connector.service.impl.ProblemSetServiceImpl;
 import org.assistments.connector.service.impl.StudentClassServiceImpl;
 import org.assistments.connector.utility.Constants;
+import org.assistments.direct.LiteUtility;
 import org.assistments.service.controller.ErrorLogController;
 import org.assistments.service.domain.ProblemSet;
 import org.assistments.service.domain.ReferenceTokenPair;

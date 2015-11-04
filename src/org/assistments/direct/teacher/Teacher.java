@@ -20,18 +20,11 @@ import org.apache.commons.codec.binary.Base32;
 import org.assistments.connector.domain.PartnerToAssistments;
 import org.assistments.connector.domain.PartnerToAssistments.ColumnNames;
 import org.assistments.connector.exception.ReferenceNotFoundException;
-import org.assistments.connector.service.AccountService;
 import org.assistments.connector.service.ShareLinkService;
-import org.assistments.connector.service.StudentClassService;
-import org.assistments.connector.service.impl.AccountServiceImpl;
 import org.assistments.connector.service.impl.ShareLinkServiceImpl;
-import org.assistments.connector.service.impl.StudentClassServiceImpl;
 import org.assistments.direct.LiteUtility;
 import org.assistments.direct.LoginInfo;
-import org.assistments.direct.teacher.Roster.SectionInfo;
-import org.assistments.service.controller.impl.ShareLinkControllerDAOImpl;
 import org.assistments.service.domain.ShareLink;
-import org.assistments.service.domain.User;
 
 @WebServlet({ "/Teacher", "/teacher" })
 public class Teacher extends HttpServlet {

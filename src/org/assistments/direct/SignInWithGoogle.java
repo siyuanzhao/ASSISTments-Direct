@@ -3,7 +3,6 @@ package org.assistments.direct;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.security.GeneralSecurityException;
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -28,6 +27,7 @@ import org.assistments.connector.service.impl.AccountServiceImpl;
 import org.assistments.connector.service.impl.AssignmentServiceImpl;
 import org.assistments.connector.service.impl.StudentClassServiceImpl;
 import org.assistments.connector.utility.Constants;
+import org.assistments.connector.utility.LocalhostSettings;
 import org.assistments.service.controller.ErrorLogController;
 import org.assistments.service.domain.ReferenceTokenPair;
 import org.assistments.service.domain.User;

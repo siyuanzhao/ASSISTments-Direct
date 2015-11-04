@@ -37,6 +37,7 @@ body{
 	var folderId = "";
 	var linkType = "";
 	var assistmentsVerified = false;
+	var buttonClicked = "";
 	$(function() {
 		$("#alert").hide();
 		$("#error").hide();
@@ -45,6 +46,9 @@ body{
 		$("#external_verified_list").hide();
 		$("#error_message_invalid_url").hide();
 		$("#error_message_not_share").hide();
+		$("button").click(function(){
+			buttonClicked = $(this).attr("id");
+		});
 		$("form").submit(function(e) {
 			e.preventDefault();
 			$("#alert").hide();
@@ -136,14 +140,19 @@ body{
 			if (authResult && !authResult.error) {
 				console.log(authResult.access_token);
 				accessToken = authResult.access_token;
-				createGoogleSites();
+				if(buttonClicked == "google_site_button"){
+					createGoogleSites();
+				}else if(buttonClicked == "google_site_update_button"){
+					updateGoogleSites();
+				}
+				
 			}
 
 		}
 		function createGoogleSites() {
 			console.log(site_name);
 			$(".progress").show();
-			$("#google_site_button").prop("disabled", true);
+			$("button").prop("disabled", true);
 			var url = "";
 			var form = "";
 			if(linkType == "verified"){
@@ -168,13 +177,51 @@ body{
 				success : function(data) {
 					$(".progress").hide();
 					$("#alert").show();
-					$("#google_site_button").prop("disabled",false);
+					$("button").prop("disabled",false);
 				},
 				error : function(data) {
 					console.log("Site Created Unsuccessfully!");
 					$(".progress").hide();
 					$("#error").show();
-					$("#google_site_button").prop("disabled", false);
+					$("button").prop("disabled", false);
+				}
+			});
+		}
+		function updateGoogleSites() {
+			console.log(site_name);
+			$(".progress").show();
+			$("button").prop("disabled", true);
+			var url = "";
+			var form = "";
+			if(linkType == "verified"){
+				url = $("#url").val();
+				form = $("#form").val();
+			}
+			$.ajax({
+				url : "update_google_sites",
+				timeout : 150000,
+				type : "POST",
+				data : {
+					access_token : accessToken,
+					site_url : siteName,
+					owner_id : ownerId,
+					folder_id : folderId,
+					link_type : linkType,
+					assistments_verified : assistmentsVerified,
+					url : url,
+					form : form
+				},
+				dataType : 'json',
+				success : function(data) {
+					$(".progress").hide();
+					$("#alert").show();
+					$("button").prop("disabled",false);
+				},
+				error : function(data) {
+					console.log("Site Created Unsuccessfully!");
+					$(".progress").hide();
+					$("#error").show();
+					$("button").prop("disabled", false);
 				}
 			});
 		}
@@ -270,8 +317,11 @@ body{
 							</div>
 						</div>
 						<div class="form-group">
-							<div class="col-sm-offset-3 col-sm-9">
-								<button ng-disabled="main_form.$invalid" type="submit" class="btn btn-primary" id="google_site_button">Login	with Google</button>
+							<div class="col-sm-offset-3 col-sm-3">
+								<button ng-disabled="main_form.$invalid" type="submit" class="btn btn-primary" id="google_site_button">Create a website</button>
+							</div>
+							<div class="col-sm-3">
+								<button ng-disabled="main_form.$invalid" type="submit" class="btn btn-primary" id="google_site_update_button">Update the website</button>
 							</div>
 						</div>
 						<div class="alert alert-success" role="alert" id="alert">Site

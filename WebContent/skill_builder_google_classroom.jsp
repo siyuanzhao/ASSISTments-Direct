@@ -17,7 +17,7 @@
 <!-- Optional theme -->
 <link href="stylesheets/bootstrap-theme.min.css" rel="stylesheet">
 <link href="stylesheets/bootstrap-select.min.css" rel="stylesheet">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script type="text/javascript" src="js/bootstrap.min.js"></script>
 <script type="text/javascript" src="js/bootstrap-tour.min.js"></script>
 <script type="text/javascript" src="js/bootstrap-select.min.js"></script>
@@ -238,10 +238,10 @@ var tour;
 								}
 							});
 					$(".classroom_share_button").click(function(e) {
-						$("#classroom_message_alert").remove();
-						var alert = "<tr class='row'><td class='col-md-1'></td><td class='col-md-1'></td><td class='col-md-10'><div id='classroom_message_alert' style='display:none;' class='alert alert-warning alert-dismissible fade in' role='alert'>"
-									+"<button class='close' aria-label='Close' data-dismiss='alert' type='button'><span aria-hidden='true'>&times;</span></button><p id='classroom_message'></p></div></td></tr>";
-						//$(alert).insertAfter($(this).parent().parent());
+						//$("#classroom_message_alert").remove();
+						//var alert = "<tr class='row'><td class='col-md-1'></td><td class='col-md-1'></td><td class='col-md-10'><div id='classroom_message_alert' style='display:none;' class='alert alert-warning alert-dismissible fade in' role='alert'>"
+						//			+"<button class='close' aria-label='Close' data-dismiss='alert' type='button'><span aria-hidden='true'>&times;</span></button><p id='classroom_message'></p></div></td></tr>";
+						//$(alert).insertAfter($(this).parent());
 						
 						problem_set_id = $(this).children().first().val();
 						problem_set_name = $(this).children().first().next().val();
@@ -251,7 +251,7 @@ var tour;
 						gapi.auth.authorize({
 							 'client_id': CLASSROOM_CLIENT_ID,
 							 'scope': SCOPES,
-							 'immediate': false}, handleAuthResult);
+							 'immediate': true}, handleAuthResult);
 					});
 					$("body").css("cursor", "initial");
 					$("#progressModal").modal("hide");
@@ -295,6 +295,7 @@ var tour;
 				});
 	}
 	function handleAuthResult(authResult) {
+		console.log(authResult);
 		if (authResult && !authResult.error) {
 			console.log(authResult);
 		    //get user profile
@@ -304,9 +305,9 @@ var tour;
 			});
 
 			request.execute(function(resp) {
-				firstName: resp.name.givenName; 
-				lastName: resp.name.familyName;
-				emailAddr: resp.emailAddress
+				firstName = resp.name.givenName; 
+				lastName = resp.name.familyName;
+				emailAddr = resp.emailAddress
 			});
 		    var request = gapi.client.request({
 				root : 'https://classroom.googleapis.com',
@@ -321,41 +322,47 @@ var tour;
 		    	//first check if the user has the permission to classroom
 		    	if(resp.error != null) {
 		    		if(resp.error.code == 403) {
-		    			$("#classroom_message").html("Sorry... Google Classroom is not available for your google account at this time.");
-		    			$("#classroom_message").css("color", "blue");
-			    		$("#classroom_message").show();
-			    		$("#classroom_message_alert").slideDown();
+		    			$("#message_body").html("Sorry... Google Classroom is not available for your google account at this time.");
+		    			$("#message_body").css("color", "blue");
+		    			$('#message_modal').modal('show');
 			    		return;
 		    		}
-		    		$("#classroom_message").html("Sorry... Something goes wrong here with Google Classroom. But we have no idea what causes the problem.");
-		    		$("#classroom_message").css("color", "red");
-		    		$("#classroom_message").show();
-		    		$("#classroom_message_alert").slideDown();
+		    		$("#message_body").html("Sorry... Something goes wrong here with Google Classroom. But we have no idea what causes the problem.");
+		    		$("#message_body").css("color", "red");
+		    		$('#message_modal').modal('show');
 		    		return;
 		    	}
 		    	var courses = resp.courses;
 		    	$("#courses_select").html("");
 		    	if(courses == null) {
-		    		console.log("You don't have any course!");
-		    		$("#classroom_message").html("Sorry... You don't have any course!<br> You should at least have a course in Google Classroom.");
-		    		$("#classroom_message").css("color", "blue");
-		    		$("#classroom_message").show();
-		    		$("#classroom_message_alert").slideDown();
+		    		$("#message_body").html("Sorry... You don't have any class!<br> You should at least have a class in Google Classroom.");
+		    		$("#message_body").css("color", "blue");
+		    		$('#message_modal').modal('show');
 		    	} else if ((courses.length > 0)) {
 		    		var i = 0;
 		    		for(i=0; i < courses.length; i++) {
 		    			var course = courses[i];
 		    			ownerId = course.ownerId;
 		    			if(course.courseState == 'ACTIVE') {
-		    				$("#courses_select").append($("<option></option>")
-		    					.attr("value", course.id)
-		    					.html(course.name + " - " + course.section));
+		    				if(course.section != null) {
+		    					$("#courses_select").append($("<option></option>")
+		    						.attr("value", course.id)
+		    						.html(course.name + " - " + course.section));
+		    				} else {
+		    					$("#courses_select").append($("<option></option>")
+			    						.attr("value", course.id)
+			    						.html(course.name));
+		    				}
 		    			}
 		    		}
 		    		$('.selectpicker').selectpicker('refresh');
 		    		$('#myModal').modal('show');
 		    	}
 		    });
+		} else {
+			$("#message_body").html("It seems that you don't log into Google. Please sign into Google first and then access the app.");
+    		$("#message_body").css("color", "blue");
+    		$('#message_modal').modal('show');
 		}
 		
 	}
@@ -451,5 +458,21 @@ var tour;
    </div>
  </div>
 </div>
+<div class="modal fade" id="message_modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Message</h4>
+      </div>
+      <div class="modal-body">
+        <p id="message_body"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 </body>
 </html>

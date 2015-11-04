@@ -10,18 +10,20 @@
 <link rel="shortcut icon" href="images/shortcut_logo.png">
 <link rel="stylesheet" href="stylesheets/jquery-ui.css">
 <link rel="stylesheet" href="stylesheets/sharelinks.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/css/bootstrap-datepicker.min.css">
 <!-- Bootstrap core CSS -->
 <link href="stylesheets/bootstrap.min.css" rel="stylesheet">
 <link href="stylesheets/bootstrap-tour.min.css" rel="stylesheet">
 <!-- Optional theme -->
 <link href="stylesheets/bootstrap-theme.min.css" rel="stylesheet">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<link href="stylesheets/bootstrap-select.min.css" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script type="text/javascript" src="js/bootstrap.min.js"></script>
 <script type="text/javascript" src="js/bootstrap-tour.min.js"></script>
+<script type="text/javascript" src="js/bootstrap-select.min.js"></script>
 <script type="text/javascript" src="js/jquery-ui.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
-<script src="https://apis.google.com/js/platform.js" async defer></script>
-<script src="https://apis.google.com/js/client.js"></script>
+<script type="text/javascript" 
+	src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.min.js"></script> 
 <style type="text/css">
 li {
 	list-style-type: none;
@@ -44,10 +46,6 @@ h3 a:hover{
 }
 </style>
 <script>
-var CLASSROOM_CLIENT_ID = "757036402283-8o3nu8pdve8snhj8ds11te8bnsrnmuu6.apps.googleusercontent.com";
-var SCOPES = ["https://www.googleapis.com/auth/classroom.profile.emails",
-              "https://www.googleapis.com/auth/classroom.rosters.readonly",
-              "https://www.googleapis.com/auth/classroom.courses"];
 var ownerId = "";
 var problem_set_id = "";
 var problem_set_name = "";
@@ -57,10 +55,13 @@ var instruction = "Each assignment is a skill builder. Students work on one skil
 var toolSelected = "";
 var tour;
 	$(function() {
+		$('.selectpicker').selectpicker();
+		$('#assignment_info').hide();
 		$('.js-loading-bar').modal({
 			  backdrop: 'static',
 			  show: false
 			});
+	
 		//set the nav bar active item
 		var toolType = $("#tool_type").val();
 		if(toolType == "skill_builder"){
@@ -71,28 +72,32 @@ var tour;
 			$("#chemistry_page").addClass("nav_active");
 		}
 		
-		$("#share_to_classroom_btn").click(function(e) {
+
+	 	$("#share_to_classroom_btn").click(function(e) {
 			var course_id = $("#courses_select").val(); 
+			
 			var course_name = $("#courses_select option:selected").text();
+			var due_date = $('.datepicker').val();
+			
 			var link_to_share = "";
+			$(this).addClass("disabled");
 			$.ajax({
-				url: 'google_classroom/setup',
+				url: 's/edmodo/setup',
 				type: 'POST',
-				data: {course_id: course_id, course_name: course_name, email: ownerId, problem_set_id: problem_set_id},
+				data: {course_id: course_id, course_name: course_name, problem_set_id: problem_set_id,due_date: due_date},
 				async: false,
 				success: function(data) {
-					console.log(problem_set_name);
-					problem_set_name = encodeURI(problem_set_name);
-					link_to_share = encodeURI(data.classroom_link);
+					$("#assignment_info").html("Assignment Created Successfully!");
+					$("#assignment_info").show(700);
+				
 				},
 				error: function(data) {
 					console.log(data);
 					return;
 				}
 			});
-			var url = 'https://classroom.google.com/share?url='+link_to_share+'&title='+problem_set_name;
-			window.open(url, '', 'width=650,height=450');
-		});
+			$("#share_to_classroom_btn").removeClass("disabled");
+		}); 
 		(function ($) {
 			
 	        $('#filter').keyup(function () {
@@ -111,7 +116,7 @@ var tour;
 			var id = $(this).attr("id");
 			if(id == "landing_page" || id == "logo"){
 				toolSelected  = "landing_page";
-				window.location.assign("/direct/s/EdmodoAppsLandingPage/");
+				window.location.assign("/direct/s/edmodo_app");
 			}else if(id == "skill_builder_page"){
 				toolSelected = "skill_builder_link";
 				window.location.assign("/direct/SkillBuilderEdmodoClassroom?folder_id=22&tool_type=skill_builder");
@@ -197,18 +202,41 @@ var tour;
 								}
 							});
 					$(".classroom_share_button").click(function(e) {
-						/* $("#classroom_message_alert").remove();
-						var alert = "<div id='classroom_message_alert' style='display:none;' class='alert alert-warning alert-dismissible fade in' role='alert'>"
-									+"<button class='close' aria-label='Close' data-dismiss='alert' type='button'><span aria-hidden='true'>&times;</span></button><p id='classroom_message'></p></div>";
-						$(this).parent().parent().append(alert);
-						
+						//get group list for this teacher
+						  $.ajax({
+							url: '/direct/s/get_groups_for_user',
+							type: 'GET',
+							async: true,
+							success: function(data) {
+								var groups = data.groups;
+								for(var i=0; i < groups.length; i++) {
+									var group = groups[i];
+									$("#courses_select").append($("<option></option>")
+					    					.attr("value", group.group_id)
+					    					.html(group.group_name));	
+								}
+								
+								$('.selectpicker').selectpicker('refresh');
+								
+								$('#myModal').modal('show');
+								$('.datepicker').datepicker( {
+									   autoclose: true,
+								    format: 'yyyy-mm-dd',
+								    startDate: '+d',
+								    setDate: new Date(), 
+									 
+								} )  
+								  $('.datepicker').datepicker("setDate", new Date()); 
+								
+							},
+							error: function(data) {
+								console.log(data);
+								return;
+							}
+						});
 						problem_set_id = $(this).children().first().val();
-						problem_set_name = $(this).children().first().next().val();
-						gapi.auth.authorize({
-							 'client_id': CLASSROOM_CLIENT_ID,
-							 'scope': SCOPES,
-							 'immediate': false}, handleAuthResult); */
-						$('#myModal').modal('show');
+						problem_set_name = $(this).children().first().next().val();  
+					 //	$('#myModal').modal('show'); 
 					});
 					$("body").css("cursor", "initial");
 					$("#progressModal").modal("hide");
@@ -362,21 +390,25 @@ var tour;
 					<h4 class="modal-title" id="myModalLabel">Choose class</h4>
 				</div>
 				<div class="modal-body">
-					<form class="pure-form" id="courses_form">
-						<div style="text-align: center; margin: 30px 0 0 0;">
-							<div style="margin: 20px 0 0 0;"></div>
-							<select id="courses_select" class="form-control">
-							</select><br>
+					  <form class="pure-form" id="courses_form"> 
+						  <div style="text-align: left; margin: 30px 0 0 0;">
+							<div style="margin: 20px 0 0 0;"></div>  
+							<!-- <select id="courses_select" class="form-control">
+							</select><br> --> 
+						 	<select id="courses_select" class="selectpicker"  title='Choose class' data-width="70%">
+					</select><br> 
 							<br>
 							<div style="margin: 20px 0 0 0;" id="classroom_share_button_div">
 							</div>
 						</div>
-					</form>
+					 </form> 
+					<h5 >Choose due date</h5>
+					 <input class="datepicker" data-provide="datepicker" data-date-format="yyyy-mm-dd"> 
 				</div>
+				<div class="alert alert-info" role="alert" id="assignment_info"></div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-					<button type="button" class="btn btn-primary" id="share_to_classroom_btn">Go to
-						Edmodo Classroom</button>
+					<button type="button" class="btn btn-primary" id="share_to_classroom_btn">Create Assignment</button>
 				</div>
 			</div>
 		</div>
