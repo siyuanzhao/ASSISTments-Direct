@@ -60,7 +60,7 @@ public class StudentReport extends HttpServlet {
 		String studentReportId = LiteUtility.generateStudentReportId(studentRef, assignmentRef);
 		String from = req.getParameter("from");
 		if(from != null) {
-			if("google_classroom".equals(from)) {
+			if("google_classroom".equalsIgnoreCase(from)) {
 				String noticeToStudents = "You have completed this problem set. Return to Classroom, open the assignment and mark as done.";
 				session.setAttribute("notice_to_students", noticeToStudents);
 			} else if("edmodo".equalsIgnoreCase(from)) {

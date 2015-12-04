@@ -37,6 +37,10 @@
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>direct</servlet-name>
+    <url-pattern>/schoology_classroom/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>direct</servlet-name>
     <url-pattern>/s/*</url-pattern>
   </servlet-mapping>
   <error-page>

@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
@@ -9,7 +9,6 @@
 <title>Math Skill Builders</title>
 <link rel="shortcut icon" href="images/shortcut_logo.png">
 <link rel="stylesheet" href="stylesheets/bootstrap.css">
-<link rel="stylesheet" href="stylesheets/jquery-ui.css">
 <link rel="stylesheet" href="stylesheets/sharelinks.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/css/bootstrap-datepicker.min.css">
 <!-- Bootstrap core CSS -->
@@ -19,11 +18,11 @@
 <!-- Optional theme -->
 <link href="stylesheets/bootstrap-theme.min.css" rel="stylesheet">
 <link href="stylesheets/bootstrap-select.min.css" rel="stylesheet">
-<script type="text/javascript" src="js/jquery.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 <script type="text/javascript" src="js/bootstrap.min.js"></script>
 <script type="text/javascript" src="js/bootstrap-tour.min.js"></script>
-<script type="text/javascript" src="js/bootstrap-select.min.js"></script>
+<script type="text/javascript" 
+	src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.7.5/js/bootstrap-select.min.js"></script>
 <script type="text/javascript" 
 	src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.min.js"></script>  
 <style type="text/css">
@@ -154,7 +153,7 @@ var tour;
 			var id = $(this).attr("id");
 			if(id == "landing_page" || id == "logo"){
 				toolSelected ="landing_page";
-				window.location.assign("/direct/s/edmodo_app");
+				window.location.assign("/direct/s/edmodo_home");
 			}else if(id == "skill_builder_page"){
 				toolSelected = "skill_builder_link";
 				window.location.assign("/direct/SkillBuilderEdmodoClassroom?folder_id=22&tool_type=skill_builder");

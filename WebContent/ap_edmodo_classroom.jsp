@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
@@ -20,8 +20,8 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script type="text/javascript" src="js/bootstrap.min.js"></script>
 <script type="text/javascript" src="js/bootstrap-tour.min.js"></script>
-<script type="text/javascript" src="js/bootstrap-select.min.js"></script>
-<script type="text/javascript" src="js/jquery-ui.min.js"></script>
+<script type="text/javascript" 
+	src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.7.5/js/bootstrap-select.min.js"></script>
 <script type="text/javascript" 
 	src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.min.js"></script> 
 <style type="text/css">
@@ -116,7 +116,7 @@ var tour;
 			var id = $(this).attr("id");
 			if(id == "landing_page" || id == "logo"){
 				toolSelected  = "landing_page";
-				window.location.assign("/direct/s/edmodo_app");
+				window.location.assign("/direct/s/edmodo_home");
 			}else if(id == "skill_builder_page"){
 				toolSelected = "skill_builder_link";
 				window.location.assign("/direct/SkillBuilderEdmodoClassroom?folder_id=22&tool_type=skill_builder");

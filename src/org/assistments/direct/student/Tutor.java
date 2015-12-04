@@ -21,14 +21,13 @@ public class Tutor extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		HttpSession session = req.getSession();
-		if(session.getAttribute("notice_to_students") == null) {
-			//do nothing
-		} else {
-//			String studentReportUrl = session.getAttribute("student_report").toString();
-			session.setAttribute("tutor_link", "student_report.jsp");
-//			req.setAttribute("refresh_tag", true);
-		}
-		
+
+//		String tutorLink = session.getAttribute("tutor_link").toString();
+//		String stuName = session.getAttribute("student_name").toString();
+		String tutorLink = req.getParameter("tutor_link").toString();
+		String stuName = req.getParameter("student_name").toString();
+		session.setAttribute("tutor_link", tutorLink);
+		session.setAttribute("student_name", stuName);
 		req.getRequestDispatcher("/tutor.jsp").forward(req, resp);
 	}
 

@@ -1,28 +1,25 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AP Statistics</title>
 <link rel="shortcut icon" href="images/shortcut_logo.png">
-<link rel="stylesheet" href="stylesheets/jquery-ui.css">
 <link rel="stylesheet" href="stylesheets/sharelinks.css">
 <!-- Bootstrap core CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/css/bootstrap-datepicker.min.css">
 <link href="stylesheets/bootstrap.min.css" rel="stylesheet">
 <link href="stylesheets/bootstrap-tour.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 <!-- Optional theme -->
 <link href="stylesheets/bootstrap-theme.min.css" rel="stylesheet">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 <script type="text/javascript" src="js/bootstrap.min.js"></script>
 <script type="text/javascript" src="js/bootstrap-tour.min.js"></script>
-<script type="text/javascript" src="js/jquery-ui.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
-<script src="https://apis.google.com/js/platform.js" async defer></script>
-<script src="https://apis.google.com/js/client.js"></script>
+<script type="text/javascript" 
+	src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.min.js"></script>
 <style type="text/css">
 li {
 	list-style-type: none;
@@ -45,10 +42,7 @@ h3 a:hover{
 }
 </style>
 <script>
-var CLASSROOM_CLIENT_ID = "757036402283-8o3nu8pdve8snhj8ds11te8bnsrnmuu6.apps.googleusercontent.com";
-var SCOPES = ["https://www.googleapis.com/auth/classroom.profile.emails",
-              "https://www.googleapis.com/auth/classroom.rosters.readonly",
-              "https://www.googleapis.com/auth/classroom.courses"];
+
 var ownerId = "";
 var problem_set_id = "";
 var problem_set_name = "";
@@ -56,9 +50,9 @@ var link_to_share = "";
 var instruction = "Each assignment is a skill builder. Students work on one skill until they get three right in a row."
 				+" Click on the name for a sample of the problems and the green icon to assign to your class.";
 var toolSelected = "";
-var firstName, lastName, emailAddr;
 var tour;
 	$(function() {
+		$('#assignment_info').hide();
 		$('.js-loading-bar').modal({
 			  backdrop: 'static',
 			  show: false
@@ -74,26 +68,29 @@ var tour;
 		}
 		
 		$("#share_to_classroom_btn").click(function(e) {
-			var course_id = $("#courses_select").val(); 
-			var course_name = $("#courses_select option:selected").text();
-			var link_to_share = "";
+//			var course_id = $("#courses_select").val(); 
+	//		var course_name = $("#courses_select option:selected").text();
+			$(this).addClass("disabled");
+			var due_date = $("#datePicker").data('datepicker').getFormattedDate('yyyy-mm-dd');
+			var description = $("#description-text").val();
 			$.ajax({
-				url: 'google_classroom/setup',
+				url: 'schoology_classroom/assign',
 				type: 'POST',
-				data: {course_id: course_id, course_name: course_name, email: ownerId, problem_set_id: problem_set_id,
-					first_name: firstName, last_name: lastName, email_address: emailAddr},
+				data: {problem_set_id: problem_set_id, due_date: due_date, description: description},
 				async: false,
 				success: function(data) {
 					console.log(problem_set_name);
-					link_to_share = encodeURI(data.classroom_link);
+					$("#assignment_info").html("Assignment Created Successfully!");
+					$("#assignment_info").show(700);
 				},
 				error: function(data) {
+					$("#assignment_info").html("Assignment Cannot Be Created with No Enrollments In Your Class!");
+					$("#assignment_info").show(700);
 					console.log(data);
 					return;
 				}
 			});
-			var url = 'https://classroom.google.com/share?url='+link_to_share+'&title='+problem_set_name;
-			window.open(url, '', 'width=650,height=450');
+			//$("#share_to_classroom_btn").removeClass("disabled");
 		});
 		(function ($) {
 			
@@ -113,16 +110,16 @@ var tour;
 			var id = $(this).attr("id");
 			if(id == "landing_page" || id == "logo"){
 				toolSelected  = "landing_page";
-				window.location.assign("/direct/GoogleAppsLandingPage");
+				window.location.assign("/direct/SchoologyAppsLandingPage");
 			}else if(id == "skill_builder_page"){
 				toolSelected = "skill_builder_link";
-				window.location.assign("/direct/SkillBuilderGoogleClassroom?folder_id=22&tool_type=skill_builder");
+				window.location.assign("/direct/SkillBuilderSchoologyClassroom?folder_id=22&tool_type=skill_builder");
 			}else if (id == "ap_page"){
 				toolSelected = "ap_statistics_link";
-				window.location.assign("/direct/SkillBuilderGoogleClassroom?folder_id=210644&tool_type=ap_statistics");
+				window.location.assign("/direct/SkillBuilderSchoologyClassroom?folder_id=210644&tool_type=ap_statistics");
 			}else if(id == "chemistry_page"){
 				toolSelected = "chemistry_link";
-				window.location.assign("/direct/SkillBuilderGoogleClassroom?folder_id=226695&tool_type=chemistry");
+				window.location.assign("/direct/SkillBuilderSchoologyClassroom?folder_id=226695&tool_type=chemistry");
 			}
 			
 		});
@@ -152,11 +149,12 @@ var tour;
 					rs += "<ul class='searchable'>";
 					if(data[0].type == "CurriculumItem"){
 						rs += "<table class='table table-hover'><thead style='font-size:0.8em;'><tr class='row'><th class='col-md-1' style='text-align:right;'>View</th><th class='col-md-1' style='text-align:left;'>Assign</th><th class='col-md-10'></th></tr></thead><tbody style='font-size:1.5em;'>";
+						
 					}
 					for (var i = 0; i < data.length; i++) {
 						if (data[i].type == "CurriculumItem") {
 							rs += "<tr class='curriculum_item row'><td class='col-md-1' style='text-align:right;'><a class='view_problem_icon' target='_blank' href='view_problems/"+data[i].id+"'><img src='images/view_problems_magnifier.png' style='width:30px'></a></td><td class='col-md-1' style='text-align:left;'><a href='javascript:void(0);' class='classroom_share_button'><input type='hidden' value='"+data[i].id+"'><input type='hidden' value='"+data[i].name+"'>"
-								+ "<img src='//www.gstatic.com/classroom/logo_square_48.svg' width='25px' height='25px' ></a></td><td class='col-md-10'>" + data[i].name
+								+ "<img src='images/schoology_logo.jpg' width='25px' height='25px' ></a></td><td class='col-md-10'>" + data[i].name
 								+ "</td></tr>";
 						} else {
 							rs += "<li class='folder'><h2><span class='glyphicon glyphicon-folder-open' aria-hidden='true' style='font-size:0.8em;'></span>   <a>"
@@ -170,7 +168,7 @@ var tour;
 							rs += "<table class='table table-hover'><thead style='font-size:0.8em;'><tr class='row'><th class='col-md-1' style='text-align:right;'>View</th><th class='col-md-1' style='text-align:left;'>Assign</th><th class='col-md-10'></th></tr></thead><tbody style='font-size:1.5em;'>";
 							for (var j = 0; j < data[i].problem_sets.length; j++) {
 								rs += "<tr class='curriculum_item row'><td class='col-md-1' style='text-align:right;'><a class='view_problem_icon' target='_blank' href='view_problems/"+data[i].problem_sets[j].id+"'><img src='images/view_problems_magnifier.png' style='width:30px;'></a></td><td class='col-md-1' style='text-align:left;'><a href='javascript:void(0);' class='classroom_share_button'><input type='hidden' value='"+data[i].problem_sets[j].id+"'><input type='hidden' value='"+data[i].problem_sets[j].name+"'>"
-								+ "<img src='//www.gstatic.com/classroom/logo_square_48.svg' width='25px' height='25px'></a></td><td class='col-md-10'>"+ data[i].problem_sets[j].name
+								+ "<img src='images/schoology_logo.jpg' width='25px' height='25px'></a></td><td class='col-md-10'>"+ data[i].problem_sets[j].name
 								+ "</td></tr>";
 							}
 							rs += "</tbody></table></div>";
@@ -207,11 +205,41 @@ var tour;
 						problem_set_name = $(this).children().first().next().val();
 						//decode here to make sure the problem set name is correct
 						problem_set_name = decodeURIComponent(problem_set_name);
-						problem_set_name = encodeURIComponent(problem_set_name);
-						gapi.auth.authorize({
-							 'client_id': CLASSROOM_CLIENT_ID,
-							 'scope': SCOPES,
-							 'immediate': true}, handleAuthResult);
+						//problem_set_name = encodeURIComponent(problem_set_name);
+						
+			    		$('#datePicker').datepicker({
+			    			autoclose: true,
+			    			startDate: '+1d',
+			    			format: {
+				                /*
+				                Say our UI should display a week ahead,
+				                but textbox should store the actual date.
+				                This is useful if we need UI to select local dates,
+				                but store in UTC
+				                */
+				                toDisplay: function (date, format, language) {
+				                    var d = new Date(date);
+				                    d.setDate(d.getDate()+1);
+				                    return d.toLocaleDateString();
+				                },
+				                toValue: function (date, format, language) {
+				                    var d = new Date(date);
+				                    d.setDate(d.getDate());
+				                    return new Date(d);
+				                }
+				            }
+				        });
+			    		var today = new Date();
+			    		$('#datePicker').datepicker("setDate", today.toLocaleDateString());
+			    		$('#datePicker').datepicker('setStartDate', today.toLocaleDateString());
+						$(".modal-header #myModalLabel").text( problem_set_name );
+			    		$('#myModal').modal('show');
+			    		$(".modal").on("hidden.bs.modal", function(){
+			    			$('#datePicker').datepicker('setStartDate', today.toLocaleDateString());
+			    			$("#description-text").val('');
+			    			$("#share_to_classroom_btn").removeClass("disabled");
+			    			$('#assignment_info').hide();
+			    		});
 					});
 					$("body").css("cursor", "initial");
 					$("#progressModal").modal("hide");
@@ -243,7 +271,7 @@ var tour;
 						},
 						{
 							element: $("#"+firstElm+" tr:first-child .classroom_share_button img"),
-							title: "Google Classroom Share Button",
+							title: "Schoology Classroom Share Button",
 							content:"Click on this icon to assign the skill builder to your class.",
 							placement:"top"
 						}
@@ -253,76 +281,6 @@ var tour;
 						backdrop:true
 					});
 				});
-	}
-	function handleAuthResult(authResult) {
-		if (authResult && !authResult.error) {
-			console.log(authResult);
-		    //get user profile
-		    var request = gapi.client.request({
-				root : 'https://classroom.googleapis.com',
-				path : 'v1/userProfiles/me',
-			});
-
-			request.execute(function(resp) {
-				firstName = resp.name.givenName; 
-				lastName = resp.name.familyName;
-				emailAddr = resp.emailAddress
-			});
-		    var request = gapi.client.request({
-				root : 'https://classroom.googleapis.com',
-				path : 'v1/courses',
-				params: {
-					teacherId: 'me'
-				}
-			});
-		    
-		    request.execute(function(resp) {
-		    	console.log(resp);
-		    	//first check if the user has the permission to classroom
-		    	if(resp.error != null) {
-		    		if(resp.error.code == 403) {
-		    			$("#message_body").html("Sorry... Google Classroom is not available for your google account at this time.");
-		    			$("#message_body").css("color", "blue");
-		    			$('#message_modal').modal('show');
-			    		return;
-		    		}
-		    		$("#message_body").html("Sorry... Something goes wrong here with Google Classroom. But we have no idea what causes the problem.");
-		    		$("#message_body").css("color", "red");
-		    		$('#message_modal').modal('show');
-		    		return;
-		    	}
-		    	var courses = resp.courses;
-		    	$("#courses_select").html("");
-		    	if(courses == null) {
-		    		$("#message_body").html("Sorry... You don't have any class!<br> You should at least have a class in Google Classroom.");
-		    		$("#message_body").css("color", "blue");
-		    		$('#message_modal').modal('show');
-		    	} else if ((courses.length > 0)) {
-		    		var i = 0;
-		    		for(i=0; i < courses.length; i++) {
-		    			var course = courses[i];
-		    			ownerId = course.ownerId;
-		    			if(course.courseState == 'ACTIVE') {
-		    				if(course.section != null) {
-		    					$("#courses_select").append($("<option></option>")
-		    						.attr("value", course.id)
-		    						.html(course.name + " - " + course.section));
-		    				} else {
-		    					$("#courses_select").append($("<option></option>")
-			    						.attr("value", course.id)
-			    						.html(course.name));
-		    				}
-		    			}
-		    		}
-		    		$('#myModal').modal('show');
-		    	}
-		    });
-		} else {
-			$("#message_body").html("It seems that you don't log into Google. Please sign into Google first and then access the app.");
-    		$("#message_body").css("color", "blue");
-    		$('#message_modal').modal('show');
-		}
-		
 	}
 </script>
 </head>
@@ -378,27 +336,30 @@ var tour;
 						aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
-					<h4 class="modal-title" id="myModalLabel">Choose class</h4>
+					<h4 class="modal-title" id="myModalLabel">Share to Schoology Classroom</h4>
 				</div>
 				<div class="modal-body">
-					<form class="pure-form" id="courses_form">
-						<div style="text-align: left; margin: 30px 0 0 0;">
-							<div style="margin: 30px 0 50px 0;">
-							<span class="glyphicon glyphicon-info-sign"></span>
-								The app needs you to choose the class <b>before</b> it reaches out to Google.  You will need to choose the same class again on the next screen. 
-							</div>
-							<select id="courses_select" class="form-control">
-							</select><br>
-							<br>
-							<div style="margin: 20px 0 0 0;" id="classroom_share_button_div">
-							</div>
-						</div>
-					</form>
+					<label for="input-group">Choose Due Date:</label>
+					
+					<div class="input-group input-append date" id="datePicker">
+		                <input type="text" class="form-control" name="date" id="">
+		                <span class="input-group-addon add-on">
+		                	<span class="glyphicon glyphicon-calendar"></span>
+		                </span>
+		            </div>
+		            <!-- 
+		            <input class="datepicker" id="datePicker" data-provide="datepicker" data-date-format="mm/dd/yyyy">
+		            -->
+		            <br>
+        			<label for="description-text">Description:</label>
+		            <div>
+					<textarea class="form-control" id="description-text"></textarea>	
+		            </div>
 				</div>
+				<div class="alert alert-info" role="alert" id="assignment_info"></div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-					<button type="button" class="btn btn-primary" id="share_to_classroom_btn">Go to
-						Google Classroom</button>
+					<button type="button" class="btn btn-primary" id="share_to_classroom_btn">Share</button>
 				</div>
 			</div>
 		</div>
@@ -415,22 +376,5 @@ var tour;
    </div>
  </div>
 </div>
-
-<div class="modal fade" id="message_modal">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Message</h4>
-      </div>
-      <div class="modal-body">
-        <p id="message_body"></p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
 </body>
 </html>

@@ -78,7 +78,7 @@ public class TeacherLogin extends HttpServlet {
 							user.getAssistmentsAccessToken(), email, 
 							usrPartnerRef, loginFrom);
 					session.setAttribute(LiteUtility.LOGIN_INFO_ATTRIBUTE, loginInfo);
-					resp.sendRedirect("teacher");
+					resp.sendRedirect("/direct/teacher");
 				} else { // Wrong password
 					String msg = message.getString("teacher_login.incorrect_password");
 					req.setAttribute("email", email);

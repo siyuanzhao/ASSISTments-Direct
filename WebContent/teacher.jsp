@@ -2,18 +2,18 @@
     pageEncoding="utf-8"%>
 <%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta name="google-site-verification" content="KmYDoW-s0aTEaWh0G2cBpbNkCVhs0JDUlwgZpHyat38" />
 <title>ASSISTments Direct</title>
-<link rel="stylesheet" 	href="pure-release-0.6.0/pure-min.css">
-<link rel="stylesheet" 	href="stylesheets/styles.css">
-<link rel="stylesheet" 	href="stylesheets/teacher.css">
-<link rel="stylesheet" 	href="stylesheets/jquery-ui.css">
-<script type="text/javascript" 	src="js/jquery.min.js"></script>
-<script type="text/javascript" 	src="js/jquery-ui.min.js"></script>
+<link rel="stylesheet" 	href="/direct/pure-release-0.6.0/pure-min.css">
+<link rel="stylesheet" 	href="/direct/stylesheets/styles.css">
+<link rel="stylesheet" 	href="/direct/stylesheets/teacher.css">
+<link rel="stylesheet" 	href="/direct/stylesheets/jquery-ui.css">
+<script type="text/javascript" 	src="/direct/js/jquery.min.js"></script>
+<script type="text/javascript" 	src="/direct/js/jquery-ui.min.js"></script>
 <script src="https://apis.google.com/js/platform.js" async defer></script>
 <style type="text/css">
 	#accordion > h3 {

@@ -3,7 +3,6 @@ package org.assistments.direct.student;
 import java.io.IOException;
 import java.net.URLEncoder;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -21,10 +20,9 @@ import org.assistments.connector.service.impl.AccountServiceImpl;
 import org.assistments.connector.service.impl.AssignmentServiceImpl;
 import org.assistments.connector.service.impl.StudentClassServiceImpl;
 import org.assistments.connector.utility.Constants;
-import org.assistments.connector.utility.LocalhostSettings;
-import org.assistments.direct.LiteUtility;
 import org.assistments.service.domain.ReferenceTokenPair;
 import org.assistments.service.domain.User;
+import org.assistments.direct.LiteUtility;
 
 @WebServlet({ "/beginAssignment", "/BeginAssignment" })
 public class BeginAssignment extends HttpServlet {
@@ -105,10 +103,7 @@ public class BeginAssignment extends HttpServlet {
 		onExit = URLEncoder.encode(onExit, "UTF-8");
 		//get url to invoke the tutor
 		AssignmentService assignmentServ = new AssignmentServiceImpl(LiteUtility.PARTNER_REF, stuBehalf);
-		String logoUrl = LiteUtility.DIRECT_URL + "/images/direct_logo.gif";
-		logoUrl = URLEncoder.encode(logoUrl, "UTF-8");
-//		String whiteLabeled = "true";
-//		String accountName = student.getDisplayName();
+		
 		String tutorURL = assignmentServ.getAssignment(assignmentRef, onExit);
 		tutorURL = URLEncoder.encode(Constants.ASSISSTments_URL, "UTF-8") + tutorURL;
 		String loginURL = Constants.LOGIN_URL;
@@ -116,18 +111,15 @@ public class BeginAssignment extends HttpServlet {
 				loginURL, LiteUtility.PARTNER_REF, stuBehalf, tutorURL, LiteUtility.LOGIN_FAILURE);
 		HttpSession session = req.getSession();
 		
-		session.setAttribute("tutor_link", addressToGo);
-		session.setAttribute("student_name", fullName);
+//		session.setAttribute("tutor_link", addressToGo);
+//		session.setAttribute("student_name", fullName);
 		session.removeAttribute("notice_to_students");
-		//save url to student report
-		String studentReportURL = Constants.ASSISSTments_URL+"external_tutor/student_class/report?partner_id="+LiteUtility.PARTNER_ID
-				+"&class_ref="+studentClassRef+"&assignment_ref="+assignmentRef;
- 
-		String studentReportId = LiteUtility.generateStudentReportId(studentRef, assignmentRef);
-		ServletContext context = getServletContext();
-		context.setAttribute(studentReportId, studentReportURL);
-//		resp.sendRedirect(addressToGo);
+		addressToGo = URLEncoder.encode(addressToGo, "UTF-8");
+		fullName = URLEncoder.encode(fullName, "UTF-8");
+		resp.sendRedirect("/direct//tutor?tutor_link="+addressToGo+"&student_name="+fullName);
 //		req.getRequestDispatcher("tutor.jsp").forward(req, resp);
-		resp.sendRedirect("tutor");
+//		req.setAttribute("tutor_link", addressToGo);
+//		req.setAttribute("student_name", fullName);
+//		req.getRequestDispatcher("/tutor").forward(req, resp);
 	}
 }

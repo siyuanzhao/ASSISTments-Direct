@@ -2,7 +2,7 @@
     pageEncoding="utf-8"%>
 <%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -10,11 +10,11 @@
 	content="588893615069-3l8u6q8n9quf6ouaj1j9de1m4q24kb4k.apps.googleusercontent.com">
 <meta name="google-site-verification" content="KmYDoW-s0aTEaWh0G2cBpbNkCVhs0JDUlwgZpHyat38" />
 <title>Login</title>
-<link rel="stylesheet"  href="stylesheets/signin.css">
+<link rel="stylesheet"  href="/direct/stylesheets/signin.css">
 <link href="stylesheets/flat-ui.min.css" rel="stylesheet">
-<script type="text/javascript" 	src="js/jquery.min.js"></script>
+<script type="text/javascript" 	src="/direct/js/jquery.min.js"></script>
 <script type="text/javascript" src="https://apis.google.com/js/platform.js"  async defer></script>
-<script type="text/javascript" 	src="js/script.js"></script>
+<script type="text/javascript" 	src="/direct/js/script.js"></script>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 <script type="text/javascript">
 	$(function() {

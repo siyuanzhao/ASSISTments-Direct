@@ -75,11 +75,6 @@ $(function() {
 		<iframe class="frame" src="${sessionScope.tutor_link }"></iframe>
 		<div class="bar banner">
 			<div class="container">
-				<!-- 
-				<img alt="ASSISTments" src="${initParam.path}images/direct_logo.gif" height="50px;" width="250px;" 
-					style="position: relative; top: 5px; float: left;">
-					 -->
-				<span style="color: white; float: left; position: relative; top: 15px; font: small;">${sessionScope.notice_to_students }</span>
 				<span style="color: white; float: right; position: relative; top: 15px; font: small;">${sessionScope.student_name }</span>
 			</div>
 		</div>

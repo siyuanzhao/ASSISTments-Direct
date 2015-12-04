@@ -51,7 +51,7 @@ function handleAuthResult(authResult) {
     $("#message").html("Fetch your profile from Google...<br>");
     var id;
 	var course_id = $("input#course_id").val();
-	
+	var assignment_ref = $("input#assignment_ref").val();
 	var firstName;
 	var lastName;
 	var role = "teacher";
@@ -78,6 +78,7 @@ function handleAuthResult(authResult) {
 				role = "student";
 				if(resp.error != null) {
 					// access to api is denied
+					console.log(resp.error);
 					role = 'student';
 				} else {
 					var teachers = resp.teachers;
@@ -85,6 +86,7 @@ function handleAuthResult(authResult) {
 						var i = 0;
 						for(i=0; i < teachers.length; i++) {
 							var teacher = teachers[i];
+							console.log(teacher.userId);
 							if(teacher.userId == id) {
 								role = "teacher";
 							}
@@ -98,10 +100,11 @@ function handleAuthResult(authResult) {
 				} else {
 					$("#message").html("Build your report...<br>");
 				}
+				
 				$.ajax({
 					url: 'start',
 					type: 'GET',
-					data: {id: id, role: role, firstName: firstName, lastName: lastName},
+					data: {id: id, role: role, firstName: firstName, lastName: lastName, assignmentReference: assignment_ref},
 					dataType: "json",
 					async: true,
 					success: function(resp) {
@@ -118,7 +121,7 @@ function handleAuthResult(authResult) {
 			$.ajax({
 				url: 'start',
 				type: 'GET',
-				data: {id: id, role: role, firstName: firstName, lastName: lastName},
+				data: {id: id, role: role, firstName: firstName, lastName: lastName, assignmentReference: assignment_ref},
 				dataType: "json",
 				async: true,
 				success: function(resp) {
@@ -166,7 +169,8 @@ function handleAuthClick(event) {
 <script src="https://apis.google.com/js/client.js?onload=checkAuth"></script>
 </head>
 <body>
-	<input type="hidden" id="course_id" value="${sessionScope.course_id }">
+	<input type="text" id="course_id" value="${sessionScope.course_id }" style="display: none;">
+	<input type="text" id="assignment_ref" value="${sessionScope.assignmentReference }" style="display: none;">
     <div id="authorize-div" style="display: none">
 		<div class="alert alert-info" role="alert">
 			This message shows up because either this is your first time running ASSISTments Tutor or you haven't signed into Google. <br>

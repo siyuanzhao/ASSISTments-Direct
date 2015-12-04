@@ -62,11 +62,12 @@ public class GoogleClassroom {
 		session.setAttribute("problem_set_name", ps.getName());
 		
 		String teacherToken = assignment.getAssistmentsAccessToken();
+		String stuClassRef = assignment.getNote();
 		// get the student class which belongs to this teacher
 		StudentClassService scs = new StudentClassServiceImpl(LiteUtility.PARTNER_REF, teacherToken);
 		PartnerToAssistments stuClass = null;
 		try {
-			stuClass = scs.find(ColumnNames.ASSISTMENTS_ACCESS_TOKEN, teacherToken).get(0);
+			stuClass = scs.find(ColumnNames.ASSISTMENTS_EXTERNAL_REFERENCE, stuClassRef).get(0);
 		} catch (ReferenceNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -140,7 +141,7 @@ public class GoogleClassroom {
 		
 		String location = "";
 		
-		String assignmentRef = session.getAttribute("assignmentReference").toString();
+		String assignmentRef = req.get("assignmentReference").toString();
 		PartnerToAssistments assignment = null;
 		try {
 			assignment = AssignmentServiceImpl.getFromAssignmentRef(LiteUtility.PARTNER_REF, assignmentRef);
@@ -153,17 +154,17 @@ public class GoogleClassroom {
 		String teacherToken = assignment.getAssistmentsAccessToken();
 		// get the student class which belongs to this teacher
 		StudentClassService scs = new StudentClassServiceImpl(LiteUtility.PARTNER_REF, teacherToken);
-		PartnerToAssistments stuClass = null;
-		try {
-			stuClass = scs.find(ColumnNames.ASSISTMENTS_ACCESS_TOKEN, teacherToken).get(0);
-		} catch (ReferenceNotFoundException e) {
-			e.printStackTrace();
-		}
+//		PartnerToAssistments stuClass = null;
+//		try {
+//			stuClass = scs.find(ColumnNames.ASSISTMENTS_ACCESS_TOKEN, teacherToken).get(0);
+//		} catch (ReferenceNotFoundException e) {
+//			e.printStackTrace();
+//		}
 //		String studentClassRef = stuClass.getAssistmentsExternalRefernce();
 
 		String studentClassRef = assignment.getNote();
-		String courseId = stuClass.getPartnerExternalReference();
-		courseId.substring(17);
+//		String courseId = stuClass.getPartnerExternalReference();
+//		courseId.substring(17);
 		if(("student").equals(role)) {
 			// create the student account
 			String userName = firstName + "_" + lastName;
@@ -179,11 +180,6 @@ public class GoogleClassroom {
 				studentRef = pair.getExternalRef();
 				studentToken = pair.getAccessToken();
 			} catch(org.assistments.connector.exception.TransferUserException e) {
-//				e.printStackTrace();
-//				String errorMessage = e.getMessage();
-//				String instruction = "The server seems to be unstable at this moment. Please take a break and try it again later.";
-//				LiteUtility.directToErrorPage(errorMessage, instruction, req, resp);
-//				return;
 				ErrorLogController.addNewError(e, 1, LiteUtility.ERROR_SOURCE_TYPE);
 			}
 			
@@ -209,14 +205,13 @@ public class GoogleClassroom {
 			String tutorLink = String.format("%1$s?partner=%2$s&access=%3$s&on_success=%4$s&on_failure=%5$s", 
 					loginURL, LiteUtility.PARTNER_REF, studentToken, tutorURL, LiteUtility.LOGIN_FAILURE);
 			session.setAttribute("tutor_link", tutorLink);
+			tutorLink = URLEncoder.encode(tutorLink, "UTF-8");
 			session.removeAttribute("notice_to_students");
 			String fullName = firstName + " " + lastName;
-			session.setAttribute("student_name", fullName);
-			location = LiteUtility.DIRECT_URL+"/tutor";
+			fullName = URLEncoder.encode(fullName, "UTF-8");
+			location = LiteUtility.DIRECT_URL+"/tutor?tutor_link="+tutorLink+"&student_name="+fullName;
 		} else {
-			//teacher wants to see the report
-			//first check if the teacher owns this assignment
-		
+			//teacher wants to see the report		
 			//get report link
 			Base32 base32 = new Base32();
 			String reportRef = base32.encodeAsString(assignmentRef.getBytes());

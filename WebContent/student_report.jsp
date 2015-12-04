@@ -51,6 +51,9 @@
 <div class="bar banner">
 </div>
  <div class="container" style="text-align: left; color: black; padding: 30px 30px 30px 30px; background: white; margin-top: 68px;">
+ <div class="alert alert-success" role="alert">
+ 	<h5>${sessionScope.notice_to_students }</h5>
+ </div>
  <h3 style="color: #1363AC;">Assignment Report</h3>
  <h4>${sessionScope.problem_set_name }</h4>
  <table class="table table-striped table-hover" data-toggle="table">
@@ -64,9 +67,9 @@
  		</tr>
  	</thead>
  	<tbody>
- 		<c:forEach items="${sessionScope.report_entries }" var="entry">
+ 		<c:forEach items="${sessionScope.report_entries }" var="entry" varStatus="loop">
  			<tr>
- 				<td>${entry.decodedProblemId}</td>
+ 				<td>${loop.index + 1}</td>
  				<td>
  					<div style="display: inline-block; text-align: left; margin: 30px 0 0 0;">
  						${entry.myAnswer}

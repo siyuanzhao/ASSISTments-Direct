@@ -134,7 +134,7 @@
 		<div style="clear: both;"></div>
 		<div class ="container" style="background: white; height: 100%;">
 		<h4 style="margin: 10px 0 0 0;">${label1 }</h4>
-		<form action="../beginAssignment" method="post"  class="form-signin">
+		<form action="/direct/beginAssignment" method="post"  class="form-signin">
 			<fieldset>
 				<input type="hidden" name="assignment_ref" id="assignment_ref"
 					value=<%=request.getAttribute("assignment_ref").toString()%>>

@@ -124,10 +124,7 @@ public class EdmodoApp {
 				scs.enrollStudent(studentRef, studentClassRef);
 				
 				//save url to student report
-				String studentReportURL = Constants.ASSISSTments_URL+"external_tutor/student_class/report?partner_id="+
-						ApplicationSettings.partner_id+"&class_ref="+studentClassRef+"&assignment_ref="+assignmentRef;
 				Map<String, String> map = new HashMap<>();
-				map.put("reportUrl", studentReportURL);
 				map.put("edmodoUserToken", edmodoUserToken);
 				map.put("edmodoAccessToken", edmodoAccessToken);
 				map.put("edmodoAssignmentId", assignment.getPartnerExternalReference());
@@ -146,14 +143,17 @@ public class EdmodoApp {
 						loginURL, ApplicationSettings.partner_reference, studentToken, tutorURL, LiteUtility.LOGIN_FAILURE);
 				session.setAttribute("tutor_link", tutorLink);
 				session.removeAttribute("notice_to_students");
+				tutorLink = URLEncoder.encode(tutorLink, "UTF-8");
 				String fullName = firstName + " " + lastName;
 				session.setAttribute("student_name", fullName);
-				return "redirect:/tutor";
+				fullName = URLEncoder.encode(fullName, "UTF-8");
+				return "redirect:/tutor?tutor_link="+tutorLink+"&student_name="+fullName;
 			} else {
 				return "redirect:teacher_report/" + assignmentRef;
 			}
 		} else {
 			return "edmodo_landing_page";
+			
 		}
 		
 	}
@@ -283,5 +283,9 @@ public class EdmodoApp {
 		
 		map.put("edmodo_link", edmodoLink);
 		return new ResponseEntity<>(map, HttpStatus.OK);
+	}
+	@RequestMapping(value = "/edmodo_home", method = RequestMethod.GET)
+	public String returnHome(HttpSession session, HttpServletRequest req){
+		return "edmodo_landing_page";
 	}
 }

@@ -2,7 +2,7 @@
 	pageEncoding="utf-8"%>
 <%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -41,8 +41,9 @@ a:hover {
 <script type="text/javascript" 	src="../js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="../stylesheets/bootstrap.min.css">
 <link rel="stylesheet" href="../stylesheets/bootstrap-theme.min.css">
-<script type="text/javascript" src="../js/bootstrap-select.min.js"></script>
-<link href="../stylesheets/bootstrap-select.min.css" rel="stylesheet">
+<script type="text/javascript" 
+	src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.7.5/js/bootstrap-select.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.7.5/css/bootstrap-select.min.css" rel="stylesheet">
 <script type="text/javascript">
 //window.___gcfg = {
 //        parsetags: 'explicit'
